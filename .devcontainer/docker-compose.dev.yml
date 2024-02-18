@@ -5,7 +5,9 @@ services:
         restart: always
         # set shared memory limit when using docker-compose
         shm_size: 128mb
-        #volumes:
+        volumes:
+            # The volume for postgres data
+            - ./postgres-data/:/var/lib/postgresql/data
         environment:
             POSTGRES_DB: metapulse-db
             POSTGRES_USER: admin
@@ -19,8 +21,6 @@ services:
         volumes:
             # The volume for the code
             - .:/workspace:cached
-            # The volume for postgres data
-            - ./postgres-data/:/var/lib/postgresql/data
         # command: /bin/bash -c "cd /workspace && ./gradlew bootRun"
         command: /bin/bash -c "cd /workspace && while true; do sleep 3600; done"
         environment:
