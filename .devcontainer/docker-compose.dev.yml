@@ -21,6 +21,7 @@ services:
         volumes:
             # The volume for the code
             - .:/workspace:cached
+            - /workspace/build
         # command: /bin/bash -c "cd /workspace && ./gradlew bootRun"
         command: /bin/bash -c "cd /workspace && while true; do sleep 3600; done"
         environment:
