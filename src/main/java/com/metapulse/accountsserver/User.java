@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "users") // Specify a different table name, since postgres uses "user" as reserved name.
 public class User {
@@ -16,6 +18,9 @@ public class User {
     private String name;
 
     private String password;
+
+    public User() {
+    }
 
     public Integer getId() {
         return id;
@@ -40,4 +45,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

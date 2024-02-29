@@ -8,5 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 import com.metapulse.accountsserver.User;
 
 public interface UserRepository extends CrudRepository<User, Integer>{
+    User findByName(String name);
 
 }
