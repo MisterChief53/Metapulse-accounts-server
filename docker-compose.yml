@@ -21,6 +21,7 @@ services:
         volumes:
             # The volume for the code
             - .:/workspace:cached
+            - /workspace/build
         command: /bin/bash -c "cd /workspace && ./gradlew bootRun"
         environment:
             SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/metapulse-db
