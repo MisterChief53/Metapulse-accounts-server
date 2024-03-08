@@ -14,7 +14,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestParam String name, @RequestParam String password) {
         try {
-            userService.registerUser(name, password);
+            User user = userService.registerUser(name, password);
             return ResponseEntity.ok("User registered successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to register user");
@@ -24,10 +24,11 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestParam String name, @RequestParam String password) {
         try {
-            User user = userService.authenticateUser(name, password);
-            //JWT
-            return ResponseEntity.ok("User authenticated successfully");
+            String user = userService.authenticateUser(name, password);
+            //System.out.println("Usuario autenticado: " + user.getName());
+            return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
+            //System.out.println("Autenticación fallida para el usuario: " + name);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }
