@@ -21,7 +21,7 @@ public class Item {
 
     private String code;
 
-    private InetAddress worldIP;
+    private String worldIP;
 
     public Integer getId() {
         return this.id;
@@ -55,16 +55,10 @@ public class Item {
         this.code = code;
     }
 
-    public InetAddress getIP() {
+    public String getIP() {
         return worldIP;
     }
 
-    public void setIP(String ip) {
-        try {
-            this.worldIP = InetAddress.getByName(ip);
-        } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " + ip);
-        }
-    }
+    public void setIP(String ip) { this.worldIP = ip; }
 
 }

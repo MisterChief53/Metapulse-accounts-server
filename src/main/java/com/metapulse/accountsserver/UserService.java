@@ -17,7 +17,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-
     public User registerUser(String name, String password) {
         // Check if username is already taken
         if (userRepository.findByName(name) != null) {
