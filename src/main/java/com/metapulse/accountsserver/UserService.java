@@ -31,6 +31,7 @@ public class UserService {
         User user = new User();
         user.setName(name);
         user.setPassword(hashedPassword);
+        user.setMoney(500.0);
         return userRepository.save(user);
     }
 

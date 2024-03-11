@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,5 +33,15 @@ public class MainController {
     public @ResponseBody Iterable<User> getAllUsers() {
         // This returns a JSON or XML with the users
         return userRepository.findAll();
+    }
+
+    @PutMapping("/setMoney")
+    public @ResponseBody String updateAllUsersMoney() {
+        Iterable<User> users = userRepository.findAll();
+        for (User user : users) {
+            user.setMoney(500.0);
+            userRepository.save(user);
+        }
+        return "All users have been updated with money 500";
     }
 }

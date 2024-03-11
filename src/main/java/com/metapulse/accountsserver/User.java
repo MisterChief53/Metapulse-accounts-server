@@ -19,6 +19,8 @@ public class User {
 
     private String password;
 
+    private Double money;
+
     public User() {
     }
 
@@ -44,6 +46,12 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Double getMoney() { return this.money; }
+
+    public void setMoney(Double money) {
+        this.money = money;
     }
 
 
