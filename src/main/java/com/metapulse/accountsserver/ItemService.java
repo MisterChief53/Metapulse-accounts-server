@@ -17,6 +17,7 @@ public class ItemService {
 
         Item item = new Item();
 
+        item.setName(name);
         item.setDescription(description);
         item.setCode(code);
         item.setIP(ip);
