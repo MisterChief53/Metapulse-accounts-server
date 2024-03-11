@@ -23,6 +23,10 @@ public class Item {
 
     private String worldIP;
 
+    private String user;
+
+    private String imagePath;
+
     public Integer getId() {
         return this.id;
     }
@@ -55,10 +59,16 @@ public class Item {
         this.code = code;
     }
 
-    public String getIP() {
-        return worldIP;
-    }
+    public String getIP() { return worldIP; }
 
     public void setIP(String ip) { this.worldIP = ip; }
+
+    public String getUser() { return this.user; }
+
+    public void setUser(String user) { this.user = user; }
+
+    public String getImagePath() { return this.imagePath; }
+
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 
 }
