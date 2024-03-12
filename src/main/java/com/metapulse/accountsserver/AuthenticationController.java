@@ -15,7 +15,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestParam String name, @RequestParam String password) {
         try {
-            User user = userService.registerUser(name, password);
+            userService.registerUser(name, password);
             return ResponseEntity.ok("User registered successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to register user");
@@ -26,10 +26,8 @@ public class AuthenticationController {
     public ResponseEntity<?> authenticateUser(@RequestParam String name, @RequestParam String password) {
         try {
             String user = userService.authenticateUser(name, password);
-            //System.out.println("Usuario autenticado: " + user.getName());
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
-            //System.out.println("Autenticación fallida para el usuario: " + name);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }
@@ -39,7 +37,8 @@ public class AuthenticationController {
         Claims claims = userService.getClaimsFromToken(token);
 
         if (claims != null) {
-            return ResponseEntity.ok("Authenticated successfully");
+            String username = (String) claims.get("username");
+            return ResponseEntity.ok("Authenticated successfully. User: " + username);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }

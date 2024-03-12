@@ -59,7 +59,7 @@ public class MainController {
 
         if (user != null) {
             try {
-                Item item = itemService.createItem(name,description,code,ip, username, imagePath);
+                itemService.createItem(name,description,code,ip, username, imagePath);
                 return ResponseEntity.ok("Saved the item!");
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to add the item");
