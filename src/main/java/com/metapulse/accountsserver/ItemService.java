@@ -12,7 +12,7 @@ public class ItemService {
         System.out.println("It gets into the createItem function");
 
         if (itemRepository.findByName(name) != null) {
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("Item already exists");
         }
 
         Item item = new Item();
