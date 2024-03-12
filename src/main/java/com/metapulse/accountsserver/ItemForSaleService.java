@@ -12,12 +12,15 @@ public class ItemForSaleService {
     private ItemForSaleRepository itemForSaleRepository;
 
     @Autowired
-    private ItemRepository itemRepository; // Assuming you have an ItemRepository
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     public void createItemForSale(int itemId, double price, String description) {
 
-        if(itemForSaleRepository.findByItemId(itemId)){
+        if(itemForSaleRepository.findByItemId(itemId) != null){
             throw new RuntimeException("Item already for sale");
         }
         // Load the Item entity using the provided itemId
@@ -25,20 +28,41 @@ public class ItemForSaleService {
                 .orElseThrow(() -> new IllegalArgumentException("Item with ID " + itemId + " not found"));
 
         // Create a new ItemsForSale entity
-        ItemsForSale itemsForSale = new ItemsForSale();
-        itemsForSale.setItem(item);
-        itemsForSale.setPrice(price);
-        itemsForSale.setDescription(description);
+        ItemForSale itemForSale = new ItemForSale();
+        itemForSale.setItem(item);
+        itemForSale.setPrice(price);
+        itemForSale.setDescription(description);
 
         // Save the ItemsForSale entity
-        itemForSaleRepository.save(itemsForSale);
+        itemForSaleRepository.save(itemForSale);
     }
 
-    public Iterable<ItemsForSale> getAllItemsForSale() {
+    public Iterable<ItemForSale> getAllItemsForSale() {
         return itemForSaleRepository.findAll();
     }
 
-    public ItemsForSale getItemForSaleById(int id) {
+    public ItemForSale getItemForSaleById(int id) {
         return itemForSaleRepository.findById(id).orElse(null);
+    }
+
+    @Transactional
+    public boolean buyItem(int itemId, String username) {
+        // Verificar si el item está disponible para la venta y si el usuario tiene suficiente dinero
+        ItemForSale itemForSale = itemForSaleRepository.findByItemId(itemId);
+        User user = userRepository.findByName(username);
+
+        if (itemForSale != null  && user != null && user.getMoney() >= itemForSale.getPrice()) {
+            // Actualizar el saldo del usuario y marcar el item como vendido
+            double newBalance = user.getMoney() - itemForSale.getPrice();
+            user.setMoney(newBalance);
+            //I still need to change the owner on the item
+            // Guardar los cambios en la base de datos
+            userRepository.save(user);
+            itemForSaleRepository.delete(itemForSale);
+
+            return true; // Compra exitosa
+        }
+
+        return false; // Compra fallida
     }
 }

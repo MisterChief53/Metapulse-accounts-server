@@ -18,10 +18,10 @@ public class SalesController {
     }
 
     @GetMapping("/items/{id}")
-    public ResponseEntity<?> getItemForSaleById(int id) {
-        ItemsForSale itemsForSale = itemForSaleService.getItemForSaleById(id);
-        if (itemsForSale != null) {
-            return ResponseEntity.ok(itemsForSale);
+    public ResponseEntity<?> getItemForSaleById(@PathVariable("id") int id) {
+        ItemForSale itemForSale = itemForSaleService.getItemForSaleById(id);
+        if (itemForSale != null) {
+            return ResponseEntity.ok(itemForSale);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
         }
@@ -34,6 +34,20 @@ public class SalesController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Item added for sale successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add item for sale");
+        }
+    }
+
+    @PostMapping("/buy/{id}")
+    public ResponseEntity<?> buyItem(@PathVariable("id") int id, @RequestParam String username) {
+        try {
+            boolean success = itemForSaleService.buyItem(id, username);
+            if (success) {
+                return ResponseEntity.ok("Item purchased successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found or already sold");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to buy item");
         }
     }
 }

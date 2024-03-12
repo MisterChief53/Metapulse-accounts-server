@@ -4,8 +4,8 @@ package com.metapulse.accountsserver;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "itemsForSale")
-public class ItemsForSale {
+@Table(name = "itemForSale")
+public class ItemForSale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +18,7 @@ public class ItemsForSale {
     private Item item;
 
 
-    public ItemsForSale() {
+    public ItemForSale() {
     }
 
     public Long getId() {
