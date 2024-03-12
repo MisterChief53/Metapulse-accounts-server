@@ -23,7 +23,7 @@ public class Item {
 
     private String worldIP;
 
-    private String user;
+    private String username;
 
     private String imagePath;
 
@@ -63,9 +63,9 @@ public class Item {
 
     public void setIP(String ip) { this.worldIP = ip; }
 
-    public String getUser() { return this.user; }
+    public String getUsername() { return this.username; }
 
-    public void setUser(String user) { this.user = user; }
+    public void setUsername(String username) { this.username = username; }
 
     public String getImagePath() { return this.imagePath; }
 

@@ -53,24 +53,24 @@ public class MainController {
 
     @PostMapping(path = "/addItem")
     public ResponseEntity<?> addNewItem(@RequestParam String name, @RequestParam String description
-            , @RequestParam String code, @RequestParam String ip) {
-        System.out.println("Initiates the add item process");
-        System.out.println(name);
-        System.out.println(description);
-        System.out.println(code);
-        System.out.println(ip);
+            , @RequestParam String code, @RequestParam String ip, @RequestParam String username, @RequestParam String imagePath) {
 
-        try {
-            Item item = itemService.createItem(name,description,code,ip);
-            return ResponseEntity.ok("Saved the item!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to add the item");
+        User user = userRepository.findByName(username);
+
+        if (user != null) {
+            try {
+                Item item = itemService.createItem(name,description,code,ip, username, imagePath);
+                return ResponseEntity.ok("Saved the item!");
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to add the item");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The user owner of the item doesnt exist");
         }
     }
 
     @GetMapping(path="/allItems")
     public @ResponseBody Iterable<Item> getAllItems() {
-        // This returns a JSON or XML with the users
         return itemRepository.findAll();
     }
 }
