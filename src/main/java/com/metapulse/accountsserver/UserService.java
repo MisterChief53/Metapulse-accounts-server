@@ -7,8 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import javax.crypto.SecretKey;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtException;
-
-
+import io.jsonwebtoken.Claims;
 import java.util.Base64;
 import java.util.Date;
 
@@ -42,7 +41,7 @@ public class UserService {
 
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             //System.out.println("Se entra dentro del if para iniciar con el token");
-            SecretKey secretKey = JwtUtils.getSecretKey("5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437");
+            SecretKey secretKey = JwtUtils.getSecretKey();
             //System.out.println("Se crea la secretKey ");
 
             ///*
@@ -51,7 +50,7 @@ public class UserService {
                 token = Jwts.builder()
                         .setSubject(String.valueOf(user.getId()))
                         .setIssuedAt(new Date())
-                        .setExpiration(new Date(System.currentTimeMillis() + 864000000))
+                        .setExpiration(new Date(System.currentTimeMillis() + 14400000))
                         .signWith(secretKey, SignatureAlgorithm.HS256)
                         .compact();
                 //System.out.println("Se ha creado el token");
@@ -67,4 +66,17 @@ public class UserService {
         }
     }
 
+    public Claims getClaimsFromToken(String token) {
+        SecretKey secretKey = JwtUtils.getSecretKey();
+
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

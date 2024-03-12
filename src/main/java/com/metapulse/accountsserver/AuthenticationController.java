@@ -1,5 +1,6 @@
 package com.metapulse.accountsserver;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,17 @@ public class AuthenticationController {
         } catch (RuntimeException e) {
             //System.out.println("Autenticación fallida para el usuario: " + name);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
+    }
+
+    @GetMapping("/secure")
+    public ResponseEntity<?> secureEndpoint(@RequestHeader("Authorization") String token) {
+        Claims claims = userService.getClaimsFromToken(token);
+
+        if (claims != null) {
+            return ResponseEntity.ok("Authenticated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }
     }
 }
