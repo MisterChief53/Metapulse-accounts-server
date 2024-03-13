@@ -3,13 +3,16 @@ package com.metapulse.accountsserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public Item createItem(String name, String description, String code, String ip, String user, String imagePath){
-        System.out.println("It gets into the createItem function");
 
         if (itemRepository.findByName(name) != null) {
             throw new RuntimeException("Item already exists");
@@ -25,5 +28,13 @@ public class ItemService {
         item.setImagePath(imagePath);
 
         return itemRepository.save(item);
+    }
+
+    public List<Item> getItemsByUsername(String username) {
+        if (userRepository.findByName(username) != null) {
+            return itemRepository.findByUsername(username);
+        } else {
+            throw new RuntimeException("This user doesn't exists");
+        }
     }
 }
