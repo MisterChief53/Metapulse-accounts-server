@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class ItemForSaleService {
 
@@ -47,17 +49,30 @@ public class ItemForSaleService {
 
     @Transactional
     public boolean buyItem(int itemId, String username) {
-        // Verificar si el item está disponible para la venta y si el usuario tiene suficiente dinero
-        ItemForSale itemForSale = itemForSaleRepository.findByItemId(itemId);
-        User user = userRepository.findByName(username);
 
-        if (itemForSale != null  && user != null && user.getMoney() >= itemForSale.getPrice()) {
-            // Actualizar el saldo del usuario y marcar el item como vendido
-            double newBalance = user.getMoney() - itemForSale.getPrice();
-            user.setMoney(newBalance);
-            //I still need to change the owner on the item
+        //Check if  the item is for sale and if the user that intends to buy it has enough balance
+        ItemForSale itemForSale = itemForSaleRepository.findByItemId(itemId);
+        User buyer = userRepository.findByName(username);
+
+        if (itemForSale != null  && buyer != null && buyer.getMoney() >= itemForSale.getPrice()) {
+            //Get the information of the item that is being purchased and the user that sells it
+            Item  item = itemForSale.getItem();
+            User seller = userRepository.findByName(item.getUsername());
+
+            //Update the balance of the seller
+            double newBalance = seller.getMoney() + itemForSale.getPrice();
+            seller.setMoney(newBalance);
+
+            //Update the balance of the buyer
+            newBalance = buyer.getMoney() - itemForSale.getPrice();
+            buyer.setMoney(newBalance);
+
+            //Change the owner of the item
+            item.setUsername(buyer.getName());
             // Guardar los cambios en la base de datos
-            userRepository.save(user);
+            userRepository.save(buyer);
+            userRepository.save(seller);
+            itemRepository.save(item);
             itemForSaleRepository.delete(itemForSale);
 
             return true; // Compra exitosa
