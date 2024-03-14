@@ -45,7 +45,7 @@ public class MainController {
     public @ResponseBody String updateAllUsersMoney() {
         Iterable<User> users = userRepository.findAll();
         for (User user : users) {
-            user.setMoney(500.0);
+            user.setMoney(1500.0);
             userRepository.save(user);
         }
         return "All users have been updated with money 500";

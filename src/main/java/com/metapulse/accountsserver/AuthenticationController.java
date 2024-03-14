@@ -38,7 +38,7 @@ public class AuthenticationController {
 
         if (claims != null) {
             String username = (String) claims.get("username");
-            return ResponseEntity.ok("Authenticated successfully. User: " + username);
+            return ResponseEntity.ok(username);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }
