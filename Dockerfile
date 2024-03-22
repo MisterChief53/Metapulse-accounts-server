@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-debian:latest
+FROM bellsoft/liberica-openjdk-debian:21
 
 # RUN apt-get update && apt-get install -y curl unzip procps libxext libxrender libxtst libxi freetype gcompat
 
