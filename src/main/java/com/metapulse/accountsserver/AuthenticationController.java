@@ -15,12 +15,17 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestParam String name, @RequestParam String password) {
-        try {
-            userService.registerUser(name, password);
-            return ResponseEntity.ok("User registered successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to register user");
+        if(!name.isEmpty() && !password.isEmpty()){
+            try {
+                userService.registerUser(name, password);
+                return ResponseEntity.ok("User registered successfully");
+            } catch (RuntimeException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to register user");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your username or password is empty");
         }
+
     }
 
     @PostMapping("/login")
