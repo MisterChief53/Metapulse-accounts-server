@@ -100,12 +100,14 @@ public class TradeController {
             List<Item> itemsUser2 = itemService.getItemsByUsernameAndStatus(user2.getName());
 
             StringBuilder responseBuilder = new StringBuilder();
+            responseBuilder.append("User 1 trade status: ").append((trade.getacceptedTradeUser1())).append(("\n"));
             responseBuilder.append("Items of User 1 to trade: ").append(trade.getTradableMoneyUser1()).append("\n");
             responseBuilder.append("Items of User 1 to trade:\n");
             for (Item item : itemsUser1) {
                 responseBuilder.append("Name: ").append(item.getName()).append("\n");
             }
             responseBuilder.append("\n----------------------\n");
+            responseBuilder.append("User 2 trade status: ").append((trade.getacceptedTradeUser1())).append(("\n"));
             responseBuilder.append("Items of User 2 to trade: ").append(trade.getTradableMoneyUser2()).append("\n");
             responseBuilder.append("Items of User 2 to trade:\n");
             for (Item item : itemsUser2) {
@@ -150,6 +152,55 @@ public class TradeController {
             }
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user does not exist");
+        }
+    }
+
+    @PostMapping("/execute")
+    public ResponseEntity<?> executeTrade(@RequestParam int tradeId, @RequestParam int userId) {
+        try {
+            Trade trade = tradeService.getTradeFromId(tradeId);
+            User user1 = trade.getUser1();
+            User user2 = trade.getUser2();
+
+            if(trade.getUser1().getId() == userId) {
+                trade.setacceptedTradeUser1(!trade.getacceptedTradeUser1());
+                tradeService.updateTrade(trade);
+            } else if (trade.getUser2().getId() == userId) {
+                trade.setacceptedTradeUser2(!trade.getacceptedTradeUser2());
+                tradeService.updateTrade(trade);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
+            }
+
+            if (trade.getacceptedTradeUser1() && trade.getacceptedTradeUser2()) {
+                user1.setMoney(user1.getMoney() - trade.getTradableMoneyUser1() + trade.getTradableMoneyUser2());
+                user2.setMoney(user2.getMoney() - trade.getTradableMoneyUser2() + trade.getTradableMoneyUser1());
+                userService.updateUser(user1);
+                userService.updateUser(user2);
+
+                List<Item> itemsUser1 = itemService.getItemsByUsernameAndStatus(user1.getName());
+                List<Item> itemsUser2 = itemService.getItemsByUsernameAndStatus(user2.getName());
+
+                for (Item item : itemsUser1) {
+                    item.setUsername(user2.getName());
+                    item.setTradableStatus(false);
+                    itemService.updateItem(item);
+                }
+
+                for (Item item : itemsUser2) {
+                    item.setUsername(user1.getName());
+                    item.setTradableStatus(false);
+                    itemService.updateItem(item);
+                }
+
+                tradeService.deleteTrade(trade);
+
+                return ResponseEntity.ok("Trade executed successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Both users must accept the trade");
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to execute trade");
         }
     }
 }

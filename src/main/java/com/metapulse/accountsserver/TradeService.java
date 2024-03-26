@@ -30,4 +30,8 @@ public class TradeService {
     public void updateTrade(Trade trade) {
         tradeRepository.save(trade);
     }
+
+    public void deleteTrade(Trade trade) {
+        tradeRepository.delete(trade);
+    }
 }
