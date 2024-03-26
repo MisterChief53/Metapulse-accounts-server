@@ -46,7 +46,7 @@ public class TradeController {
         if( userOwner != null ) {
             if( item != null ) {
                 if( itemService.verifyOwner(item, userOwner.getName()) ) {
-                    item.setTradableStatus(true);
+                    item.setTradableStatus(!item.getTradableStatus());
                     itemService.updateItem(item);
                     return ResponseEntity.ok("Item is tradable");
                 } else {
@@ -86,6 +86,70 @@ public class TradeController {
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find items");
+        }
+    }
+
+    @GetMapping("/tradeData")
+    public ResponseEntity<?> tradeData(@RequestParam int tradeId) {
+        try {
+            Trade trade = tradeService.getTradeFromId(tradeId);
+            User user1 = trade.getUser1();
+            User user2 = trade.getUser2();
+
+            List<Item> itemsUser1 = itemService.getItemsByUsernameAndStatus(user1.getName());
+            List<Item> itemsUser2 = itemService.getItemsByUsernameAndStatus(user2.getName());
+
+            StringBuilder responseBuilder = new StringBuilder();
+            responseBuilder.append("Items of User 1 to trade: ").append(trade.getTradableMoneyUser1()).append("\n");
+            responseBuilder.append("Items of User 1 to trade:\n");
+            for (Item item : itemsUser1) {
+                responseBuilder.append("Name: ").append(item.getName()).append("\n");
+            }
+            responseBuilder.append("\n----------------------\n");
+            responseBuilder.append("Items of User 2 to trade: ").append(trade.getTradableMoneyUser2()).append("\n");
+            responseBuilder.append("Items of User 2 to trade:\n");
+            for (Item item : itemsUser2) {
+                responseBuilder.append("Name: ").append(item.getName()).append("\n");
+            }
+
+            String response = responseBuilder.toString();
+
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find items");
+        }
+    }
+
+    @PostMapping("/tradeMoney")
+    public ResponseEntity<?> tradeMoney(@RequestParam Double money, @RequestParam int userId, @RequestParam int tradeId) {
+        User userOwner = userService.getUserFromId(userId);
+        Trade trade = tradeService.getTradeFromId(tradeId);
+        User user;
+
+        if( userOwner != null ) {
+            if(trade.getUser1().getId() == userId) {
+                user = trade.getUser1();
+                if(money <= user.getMoney()) {
+                    trade.setTradableMoneyUser1(money);
+                    tradeService.updateTrade(trade);
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User 1 trade money updated");
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user doesn't have enough money");
+                }
+            } else if (trade.getUser2().getId() == userId) {
+                user = trade.getUser2();
+                if(money <= user.getMoney()) {
+                    trade.setTradableMoneyUser2(money);
+                    tradeService.updateTrade(trade);
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User 2 trade money updated");
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user doesn't have enough money");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user does not exist");
         }
     }
 }

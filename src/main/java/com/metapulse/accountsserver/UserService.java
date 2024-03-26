@@ -75,4 +75,8 @@ public class UserService {
     public User getUserFromId(int id) {
         return userRepository.findById(id);
     }
+
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
 }

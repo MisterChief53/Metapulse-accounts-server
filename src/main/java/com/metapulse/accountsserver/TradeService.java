@@ -26,4 +26,8 @@ public class TradeService {
     public Trade getTradeFromId(int id) {
         return tradeRepository.findTradeById(id);
     }
+
+    public void updateTrade(Trade trade) {
+        tradeRepository.save(trade);
+    }
 }
