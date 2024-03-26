@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,6 +22,10 @@ public class MainController {
     private ItemService itemService;
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private ItemForSaleRepository itemForSaleRepository;
+    @Autowired
+    private TradeRepository tradeRepository;
 
     @PostMapping(path="/add") // Map ONLY POST Requests
     public @ResponseBody String addNewUser (@RequestParam String name
@@ -72,5 +77,67 @@ public class MainController {
     @GetMapping(path="/allItems")
     public @ResponseBody Iterable<Item> getAllItems() {
         return itemRepository.findAll();
+    }
+
+    @GetMapping(path="/allTrades")
+    public @ResponseBody Iterable<Trade> getAllTrades() {
+        return tradeRepository.findAll();
+    }
+
+    @DeleteMapping(path="/deleteAllUsers")
+    public @ResponseBody String deleteAllUsers() {
+        try {
+            userRepository.deleteAll();
+
+            return "All users deleted successfully!";
+        } catch (Exception e) {
+            return "An error occurred while deleting data: " + e.getMessage();
+        }
+    }
+
+    @DeleteMapping(path="/deleteAllItems")
+    public @ResponseBody String deleteAllItems() {
+        try {
+            itemRepository.deleteAll();
+
+            return "All items deleted successfully!";
+        } catch (Exception e) {
+            return "An error occurred while deleting data: " + e.getMessage();
+        }
+    }
+
+    @DeleteMapping(path="/deleteAllItemsForSale")
+    public @ResponseBody String deleteAllItemsForSale() {
+        try {
+            itemForSaleRepository.deleteAll();
+
+            return "All items for sale deleted successfully!";
+        } catch (Exception e) {
+            return "An error occurred while deleting data: " + e.getMessage();
+        }
+    }
+
+    @DeleteMapping(path="/deleteAllTrades")
+    public @ResponseBody String deleteAllTrades() {
+        try {
+            tradeRepository.deleteAll();
+
+            return "All trades deleted successfully!";
+        } catch (Exception e) {
+            return "An error occurred while deleting data: " + e.getMessage();
+        }
+    }
+
+    @DeleteMapping(path="/deleteAllData")
+    public @ResponseBody String deleteAllData() {
+        try {
+            userRepository.deleteAll();
+            itemRepository.deleteAll();
+            itemForSaleRepository.deleteAll();
+
+            return "All data deleted successfully!";
+        } catch (Exception e) {
+            return "An error occurred while deleting data: " + e.getMessage();
+        }
     }
 }

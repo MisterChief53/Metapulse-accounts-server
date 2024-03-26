@@ -27,6 +27,8 @@ public class Item {
 
     private String imagePath;
 
+    private Boolean tradable;
+
     public Integer getId() {
         return this.id;
     }
@@ -70,5 +72,9 @@ public class Item {
     public String getImagePath() { return this.imagePath; }
 
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+    public Boolean getTradableStatus() { return this.tradable; }
+
+    public void setTradableStatus(Boolean tradable) {this.tradable = tradable; }
 
 }
