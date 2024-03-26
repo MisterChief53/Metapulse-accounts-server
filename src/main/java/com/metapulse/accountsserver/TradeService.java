@@ -22,4 +22,8 @@ public class TradeService {
 
         return t.getId();
     }
+
+    public Trade getTradeFromId(int id) {
+        return tradeRepository.findTradeById(id);
+    }
 }
