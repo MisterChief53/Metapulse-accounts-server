@@ -15,7 +15,7 @@ public class ItemService {
     public Item createItem(String name, String description, String code, String ip, String user, String imagePath){
 
         if (itemRepository.findByName(name) != null) {
-            throw new RuntimeException("Item already exists");
+            throw new RuntimeException("Item already exist");
         }
 
         Item item = new Item();
@@ -35,7 +35,7 @@ public class ItemService {
         if (userRepository.findByName(username) != null) {
             return itemRepository.findByUsername(username);
         } else {
-            throw new RuntimeException("This user doesn't exists");
+            throw new RuntimeException("This user doesn't exist");
         }
     }
 
@@ -44,7 +44,7 @@ public class ItemService {
             System.out.println("Getting items of " + username);
             return itemRepository.findByUsernameAndTradableIsTrue(username);
         } else {
-            throw new RuntimeException("This user doesn't exists");
+            throw new RuntimeException("This user doesn't exist");
         }
     }
 

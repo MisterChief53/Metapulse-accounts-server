@@ -76,6 +76,8 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public User getUserFromName(String username) { return userRepository.findByName(username); }
+
     public void updateUser(User user) {
         userRepository.save(user);
     }

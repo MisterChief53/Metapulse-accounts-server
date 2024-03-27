@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -31,8 +33,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestParam String name, @RequestParam String password) {
         try {
-            String user = userService.authenticateUser(name, password);
-            return ResponseEntity.ok(user);
+            String token = userService.authenticateUser(name, password);
+            return ResponseEntity.ok(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
@@ -45,6 +47,24 @@ public class AuthenticationController {
         if (claims != null) {
             String username = (String) claims.get("username");
             return ResponseEntity.ok(username);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
+    }
+
+    @GetMapping("/userInfo")
+    public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String token) {
+        Claims claims = userService.getClaimsFromToken(token);
+
+        if (claims != null) {
+            String username = (String) claims.get("username");
+            User user = userService.getUserFromName(username);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("money", user.getMoney());
+            response.put("name", user.getName());
+
+            return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }
