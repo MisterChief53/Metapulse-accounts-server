@@ -16,15 +16,20 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final UserService userService;
 
+    private final ChatRepository chatRepository;
+
+    private final MessageRepository messageRepository;
 
 
     @Autowired
-    public DatabaseSeeder(ItemForSaleRepository itemForSaleRepository, ItemRepository itemRepository, UserRepository userRepository, TradeRepository tradeRepository, UserService userService) {
+    public DatabaseSeeder(ItemForSaleRepository itemForSaleRepository, ItemRepository itemRepository, UserRepository userRepository, TradeRepository tradeRepository, UserService userService, ChatRepository chatRepository, MessageRepository messageRepository) {
         this.itemForSaleRepository = itemForSaleRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.tradeRepository = tradeRepository;
         this.userService = userService;
+        this.chatRepository = chatRepository;
+        this.messageRepository = messageRepository;
     }
 
     @Override
@@ -49,6 +54,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         itemRepository.deleteAll();
         userRepository.deleteAll();
         tradeRepository.deleteAll();
+        messageRepository.deleteAll();
+        chatRepository.deleteAll();
     }
 
     private void seedUsers(){

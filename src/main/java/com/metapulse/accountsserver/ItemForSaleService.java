@@ -69,15 +69,15 @@ public class ItemForSaleService {
 
             //Change the owner of the item
             item.setUsername(buyer.getName());
-            // Guardar los cambios en la base de datos
+            // Save changes on database
             userRepository.save(buyer);
             userRepository.save(seller);
             itemRepository.save(item);
             itemForSaleRepository.delete(itemForSale);
 
-            return true; // Compra exitosa
+            return true; // Fulfilled
         }
 
-        return false; // Compra fallida
+        return false; // Failed
     }
 }
