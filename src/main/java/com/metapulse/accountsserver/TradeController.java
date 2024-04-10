@@ -219,10 +219,10 @@ public class TradeController {
     }
 
     @PostMapping("/setRequest")
-    public ResponseEntity<?> setUserTradeInvitation(@RequestHeader("Authorization") String token){
+    public ResponseEntity<?> setUsersTradeInvitation(@RequestHeader("Authorization") String token){
         String username = getUsernameFromToken(token);
         if(username != null){
-            userService.changeRequestStatus(username);
+            userService.changeRequestStatus();
             return ResponseEntity.ok("Trade invitation modified successfully");
 
         }else{

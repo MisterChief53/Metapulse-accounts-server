@@ -9,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Claims;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -73,11 +74,13 @@ public class UserService {
         }
     }
 
-    public void changeRequestStatus(String username){
-        User user = getUserFromName(username);
-        user.setTradeInvitation(!user.getTradeInvitation());
-        userRepository.save(user);
-        System.out.println("Se cambio el trade invitation"+ user.getTradeInvitation());
+    public void changeRequestStatus(){
+        List<User> users = (List<User>) userRepository.findAll();
+        users.forEach(user -> {
+            user.setTradeInvitation(!user.getTradeInvitation());
+            userRepository.save(user);
+        });
+        System.out.println("Se cambio el trade invitation");
     }
 
     public User getUserFromId(int id) {
