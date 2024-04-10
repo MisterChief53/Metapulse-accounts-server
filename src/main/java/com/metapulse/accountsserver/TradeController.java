@@ -3,11 +3,13 @@ package com.metapulse.accountsserver;
 import com.sun.tools.jconsole.JConsoleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller // This means that this class is a Controller
 @CrossOrigin(origins = "http://localhost:3000")
@@ -43,24 +45,23 @@ public class TradeController {
     }
 
     @PostMapping("/tradeItem")
-    public ResponseEntity<?> tradeItem(@RequestParam int itemId, @RequestParam int userId) {
-        User userOwner = userService.getUserFromId(userId);
+    public ResponseEntity<?> tradeItem(@RequestParam int itemId, @RequestHeader("Authorization") String token) {
+        String username = getUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.notFound().build();
+        }
         Item item = itemService.getItemFromId(itemId);
 
-        if( userOwner != null ) {
-            if( item != null ) {
-                if( itemService.verifyOwner(item, userOwner.getName()) ) {
-                    item.setTradableStatus(!item.getTradableStatus());
-                    itemService.updateItem(item);
-                    return ResponseEntity.ok("Item is tradable");
-                } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The item does not belong to the user");
-                }
+        if( item != null ) {
+            if( itemService.verifyOwner(item, username) ) {
+                item.setTradableStatus(!item.getTradableStatus());
+                itemService.updateItem(item);
+                return ResponseEntity.ok("Item is tradable");
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The item does not exist");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The item does not belong to the user");
             }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user does not exist");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The item does not exist");
         }
     }
 
@@ -160,16 +161,21 @@ public class TradeController {
     }
 
     @PostMapping("/execute")
-    public ResponseEntity<?> executeTrade(@RequestParam int tradeId, @RequestParam int userId) {
+    public ResponseEntity<?> executeTrade(@RequestParam int tradeId, @RequestHeader("Authorization") String token) {
         try {
+            String username = getUsernameFromToken(token);
+            if (username == null) {
+                return ResponseEntity.notFound().build();
+            }
+
             Trade trade = tradeService.getTradeFromId(tradeId);
             User user1 = trade.getUser1();
             User user2 = trade.getUser2();
 
-            if(trade.getUser1().getId() == userId) {
+            if(Objects.equals(trade.getUser1().getName(), username)) {
                 trade.setacceptedTradeUser1(!trade.getacceptedTradeUser1());
                 tradeService.updateTrade(trade);
-            } else if (trade.getUser2().getId() == userId) {
+            } else if (Objects.equals(trade.getUser2().getName(), username)) {
                 trade.setacceptedTradeUser2(!trade.getacceptedTradeUser2());
                 tradeService.updateTrade(trade);
             } else {
@@ -233,7 +239,6 @@ public class TradeController {
 
 
     private String getUsernameFromToken(String token) {
-
         ResponseEntity<?> response = authenticationController.secureEndpoint(token);
         if (response.getStatusCode() == HttpStatus.OK) {
             return (String) response.getBody();
