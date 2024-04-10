@@ -209,13 +209,14 @@ public class TradeController {
     }
 
     @GetMapping("/hasRequest")
-    public ResponseEntity<Boolean> getUserTradeInvitation(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ResponseDTO> getUserTradeInvitation(@RequestHeader("Authorization") String token) {
         String username = getUsernameFromToken(token);
         if (username == null) {
             return ResponseEntity.notFound().build();
         }
         User user = userService.getUserFromName(username);
-        return ResponseEntity.ok(user.getTradeInvitation());
+        ResponseDTO responseDTO = new ResponseDTO(user.getTradeInvitation());
+        return ResponseEntity.ok(responseDTO);
     }
 
     @PostMapping("/setRequest")
