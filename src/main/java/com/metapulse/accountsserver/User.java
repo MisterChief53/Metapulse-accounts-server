@@ -11,6 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "users") // Specify a different table name, since postgres uses "user" as reserved name.
 public class User {
+
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
@@ -20,6 +21,8 @@ public class User {
     private String password;
 
     private Double money;
+
+    private Boolean tradeInvitation;
 
     public User() {
     }
@@ -53,6 +56,15 @@ public class User {
     public void setMoney(Double money) {
         this.money = money;
     }
+
+    public Boolean getTradeInvitation() {
+        return tradeInvitation;
+    }
+
+    public void setTradeInvitation(Boolean tradeInvitation) {
+        this.tradeInvitation = tradeInvitation;
+    }
+
 
 
 }

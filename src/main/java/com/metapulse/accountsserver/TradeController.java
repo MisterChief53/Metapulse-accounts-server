@@ -1,5 +1,6 @@
 package com.metapulse.accountsserver;
 
+import com.sun.tools.jconsole.JConsoleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,9 @@ public class TradeController {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    AuthenticationController authenticationController;
 
     @PostMapping("/create")
     public ResponseEntity<?> createTrade(@RequestParam int user1Id, @RequestParam int user2Id) {
@@ -201,6 +205,39 @@ public class TradeController {
             }
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to execute trade");
+        }
+    }
+
+    @GetMapping("/hasRequest")
+    public ResponseEntity<Boolean> getUserTradeInvitation(@RequestHeader("Authorization") String token) {
+        String username = getUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = userService.getUserFromName(username);
+        return ResponseEntity.ok(user.getTradeInvitation());
+    }
+
+    @PostMapping("/setRequest")
+    public ResponseEntity<?> setUserTradeInvitation(@RequestHeader("Authorization") String token){
+        String username = getUsernameFromToken(token);
+        if(username != null){
+            userService.changeRequestStatus(username);
+            return ResponseEntity.ok("Trade invitation modified successfully");
+
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
+    }
+
+
+    private String getUsernameFromToken(String token) {
+
+        ResponseEntity<?> response = authenticationController.secureEndpoint(token);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return (String) response.getBody();
+        } else {
+            return null;
         }
     }
 }

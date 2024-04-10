@@ -28,6 +28,7 @@ public class UserService {
         user.setName(name);
         user.setPassword(hashedPassword);
         user.setMoney(500.0);
+        user.setTradeInvitation(Boolean.FALSE);
         return userRepository.save(user);
     }
 
@@ -70,6 +71,13 @@ public class UserService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public void changeRequestStatus(String username){
+        User user = getUserFromName(username);
+        user.setTradeInvitation(!user.getTradeInvitation());
+        userRepository.save(user);
+        System.out.println("Se cambio el trade invitation"+ user.getTradeInvitation());
     }
 
     public User getUserFromId(int id) {
