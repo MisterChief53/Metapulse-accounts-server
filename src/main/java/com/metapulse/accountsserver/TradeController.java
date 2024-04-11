@@ -102,9 +102,29 @@ public class TradeController {
         }
     }
 
+    @GetMapping("/tradeInformation")
+    public ResponseEntity<?> tradeInformation(@RequestHeader("Authorization") String token){
+        try{
+            String username = getUsernameFromToken(token);
+            User user;
+            Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
+            if(Objects.equals(username, trade.getUser1().getName())){
+                user = trade.getUser2();
+            }else{
+                user = trade.getUser1();
+            }
+            List<Item> itemsUser = itemService.getItemsByUsernameAndStatus(user.getName());
+            return ResponseEntity.ok(itemsUser);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find items");
+        }
+        
+    }
+
     @GetMapping("/tradeData")
     public ResponseEntity<?> tradeData() {
         try {
+
             Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
             User user1 = trade.getUser1();
             User user2 = trade.getUser2();
