@@ -19,13 +19,22 @@ public class ChatController {
     @Autowired
     private AuthenticationController authenticationController;
 
+    private final Singleton singleton;
+
+    @Autowired
+    public ChatController(Singleton singleton){
+        this.singleton =singleton;
+    }
+
 
     @PostMapping("/sendMessage")
     public ResponseEntity<?> createMessage(@RequestParam Integer chatId, @RequestParam String content, @RequestHeader("Authorization") String token ){
         String username = getUsernameFromToken(token);
+        int id = singleton.getChatIds().get(chatId-1);
+        System.out.println(id);
         if (username != null) {
             try {
-                messageService.createMessage(content,username,chatId);
+                messageService.createMessage(content,username,id);
                 return ResponseEntity.ok("Saved the message!");
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to add the message");
@@ -38,8 +47,9 @@ public class ChatController {
     @GetMapping("/getMessages")
     public ResponseEntity<?> getAllMessagesFromChat(@RequestParam Integer chatId){
         try {
-            Chat chat = chatService.getChatById(chatId);
-            return ResponseEntity.ok(messageService.getMessagesByChatId(chatId));
+            int id =singleton.getChatIds().get(chatId-1);
+            Chat chat = chatService.getChatById(id);
+            return ResponseEntity.ok(messageService.getMessagesByChatId(chat.getId()));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to load the messages");
         }
@@ -49,7 +59,6 @@ public class ChatController {
     @PostMapping("/createChat")
     public ResponseEntity<?> createChat(){
         try{
-
             Chat chat = chatService.createChat();
             return ResponseEntity.ok(chat);
         }catch (Exception e){

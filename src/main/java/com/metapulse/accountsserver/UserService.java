@@ -16,6 +16,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    private final Singleton singleton;
+
+    @Autowired
+    public UserService(Singleton singleton){
+        this.singleton =singleton;
+    }
+
     public User registerUser(String name, String password) {
         if (userRepository.findByName(name) != null) {
             throw new RuntimeException("Username already exists");
@@ -53,7 +60,7 @@ public class UserService {
                 e.printStackTrace();
                 throw new RuntimeException("Error al crear el token JWT", e);
             }
-
+            singleton.addUser(name);
             return token;
         } else {
             throw new RuntimeException("Invalid token");

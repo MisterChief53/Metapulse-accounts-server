@@ -2,6 +2,7 @@ package com.metapulse.accountsserver;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,9 +21,13 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final MessageRepository messageRepository;
 
+    private final ChatService  chatService;
+
+    private final JdbcTemplate jdbcTemplate;
+
 
     @Autowired
-    public DatabaseSeeder(ItemForSaleRepository itemForSaleRepository, ItemRepository itemRepository, UserRepository userRepository, TradeRepository tradeRepository, UserService userService, ChatRepository chatRepository, MessageRepository messageRepository) {
+    public DatabaseSeeder(ItemForSaleRepository itemForSaleRepository, ItemRepository itemRepository, UserRepository userRepository, TradeRepository tradeRepository, UserService userService, ChatRepository chatRepository, MessageRepository messageRepository, ChatService chatService, JdbcTemplate jdbcTemplate) {
         this.itemForSaleRepository = itemForSaleRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
@@ -30,32 +35,42 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.userService = userService;
         this.chatRepository = chatRepository;
         this.messageRepository = messageRepository;
+        this.chatService = chatService;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public void run(String... args) throws Exception {
-/*
+
         // Delete previous data from all repositories
         //WARNING THIS WILL DELETE ALL THE DATABASE
         this.deleteAllRepositories();
+
 
         // Seed data into userRepository
         seedUsers();
         // Seed data into itemRepository
         seedItems();
-*/
+        //Seed chat into chatRepository
+        seedChat();
+
 
 
 
     }
 
     private void deleteAllRepositories(){
+        tradeRepository.deleteAll();
         itemForSaleRepository.deleteAll();
         itemRepository.deleteAll();
         userRepository.deleteAll();
-        tradeRepository.deleteAll();
+
         messageRepository.deleteAll();
         chatRepository.deleteAll();
+    }
+
+    private void seedChat(){
+        chatService.createChat();
     }
 
     private void seedUsers(){
@@ -99,4 +114,6 @@ public class DatabaseSeeder implements CommandLineRunner {
 
 
     }
+
+
 }

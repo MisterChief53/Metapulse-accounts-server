@@ -14,7 +14,7 @@ public class Message {
 
     private String username;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "chat_id")
     private Chat chat;
 

@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 public class TradeService {
     @Autowired
     private TradeRepository tradeRepository;
+    private final Singleton singleton;
+
+    public TradeService(Singleton singleton) {
+        this.singleton = singleton;
+    }
 
     public Integer createTrade (User user1, User user2) {
         Trade trade = new Trade();
@@ -19,6 +24,7 @@ public class TradeService {
         trade.setacceptedTradeUser2(false);
 
         Trade t = tradeRepository.save(trade);
+        singleton.setTradeId(t.getId());
 
         return t.getId();
     }

@@ -8,9 +8,19 @@ public class ChatService {
     @Autowired
     private ChatRepository chatRepository;
 
+    private final Singleton singleton;
+
+    @Autowired
+    public ChatService(Singleton singleton){
+        this.singleton =singleton;
+    }
+
+
     public Chat createChat(){
         Chat chat = new Chat();
         chatRepository.save(chat);
+        singleton.addChatId(chat.getId());
+        singleton.getChatIds().forEach((id)->System.out.println(id));
         return chat;
     }
 

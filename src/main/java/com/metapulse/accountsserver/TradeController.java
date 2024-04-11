@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,10 +28,17 @@ public class TradeController {
     @Autowired
     AuthenticationController authenticationController;
 
+    private final Singleton singleton;
+
+    public TradeController(Singleton singleton) {
+        this.singleton = singleton;
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<?> createTrade(@RequestParam int user1Id, @RequestParam int user2Id) {
-        User user1 = userService.getUserFromId(user1Id); //Gets the first user by its id
-        User user2 = userService.getUserFromId(user2Id); //Gets the second user by its id
+    public ResponseEntity<?> createTrade() {
+        List<String> usernames = new ArrayList<>(singleton.getUsernames());
+        User user1 = userService.getUserFromName(usernames.get(0)); //Gets the first user by its id
+        User user2 = userService.getUserFromName(usernames.get(1)); //Gets the second user by its id
 
         if (user1 != null && user2 != null) {
             try {
@@ -66,9 +74,9 @@ public class TradeController {
     }
 
     @GetMapping("/tradeItems")
-    public ResponseEntity<?> tradeItem(@RequestParam int tradeId) {
+    public ResponseEntity<?> tradeItem() {
         try {
-            Trade trade = tradeService.getTradeFromId(tradeId);
+            Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
             User user1 = trade.getUser1();
             User user2 = trade.getUser2();
 
@@ -95,9 +103,9 @@ public class TradeController {
     }
 
     @GetMapping("/tradeData")
-    public ResponseEntity<?> tradeData(@RequestParam int tradeId) {
+    public ResponseEntity<?> tradeData() {
         try {
-            Trade trade = tradeService.getTradeFromId(tradeId);
+            Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
             User user1 = trade.getUser1();
             User user2 = trade.getUser2();
 
@@ -128,9 +136,9 @@ public class TradeController {
     }
 
     @PostMapping("/tradeMoney")
-    public ResponseEntity<?> tradeMoney(@RequestParam Double money, @RequestParam int userId, @RequestParam int tradeId) {
+    public ResponseEntity<?> tradeMoney(@RequestParam Double money, @RequestParam int userId) {
         User userOwner = userService.getUserFromId(userId);
-        Trade trade = tradeService.getTradeFromId(tradeId);
+        Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
         User user;
 
         if( userOwner != null ) {
