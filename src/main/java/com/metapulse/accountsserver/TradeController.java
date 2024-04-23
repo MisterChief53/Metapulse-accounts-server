@@ -188,6 +188,34 @@ public class TradeController {
         }
     }
 
+    @PutMapping("/rejectTrade")
+    public ResponseEntity<?> rejectTrade(@RequestHeader("Authorization") String token) {
+        try {
+            String username = getUsernameFromToken(token);
+            if (username == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
+            User user1 = trade.getUser1();
+            User user2 = trade.getUser2();
+
+            if(Objects.equals(user1.getName(), username)) {
+                trade.setacceptedTradeUser1(false);
+                tradeService.updateTrade(trade);
+                return ResponseEntity.ok("User1 rejected successfully");
+            } else if (Objects.equals(user2.getName(), username)) {
+                trade.setacceptedTradeUser2(false);
+                tradeService.updateTrade(trade);
+                return ResponseEntity.ok("User2 rejected successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to reject trade");
+        }
+    }
+
     @PutMapping("/acceptTrade")
     public ResponseEntity<?> acceptTrade(@RequestHeader("Authorization") String token){
         try {
@@ -201,19 +229,13 @@ public class TradeController {
             User user2 = trade.getUser2();
 
             if(Objects.equals(user1.getName(), username)) {
-                trade.setacceptedTradeUser1(!trade.getacceptedTradeUser1());
+                trade.setacceptedTradeUser1(true);
                 tradeService.updateTrade(trade);
-                if (trade.getacceptedTradeUser1())
-                    return ResponseEntity.ok("User1 accepted successfully");
-                else
-                    return ResponseEntity.ok("User1 unaccepted successfully");
+                return ResponseEntity.ok("User1 accepted successfully");
             } else if (Objects.equals(user2.getName(), username)) {
-                trade.setacceptedTradeUser2(!trade.getacceptedTradeUser2());
+                trade.setacceptedTradeUser2(true);
                 tradeService.updateTrade(trade);
-                if (trade.getacceptedTradeUser2())
-                    return ResponseEntity.ok("User2 accepted successfully");
-                else
-                    return ResponseEntity.ok("User2 unaccepted successfully");
+                return ResponseEntity.ok("User2 accepted successfully");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
             }
