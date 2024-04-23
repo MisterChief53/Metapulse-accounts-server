@@ -188,33 +188,48 @@ public class TradeController {
         }
     }
 
-    @PostMapping("/execute")
-    public ResponseEntity<?> executeTrade(@RequestParam int tradeId, @RequestHeader("Authorization") String token) {
+    @PutMapping("/acceptTrade")
+    public ResponseEntity<?> acceptTrade(@RequestHeader("Authorization") String token){
         try {
             String username = getUsernameFromToken(token);
             if (username == null) {
                 return ResponseEntity.notFound().build();
             }
 
-            Trade trade = tradeService.getTradeFromId(tradeId);
+            Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
             User user1 = trade.getUser1();
             User user2 = trade.getUser2();
 
-            if(Objects.equals(trade.getUser1().getName(), username)) {
+            if(Objects.equals(user1.getName(), username)) {
                 trade.setacceptedTradeUser1(!trade.getacceptedTradeUser1());
                 tradeService.updateTrade(trade);
-            } else if (Objects.equals(trade.getUser2().getName(), username)) {
+                return ResponseEntity.ok("User1 accepted successfully");
+            } else if (Objects.equals(user2.getName(), username)) {
                 trade.setacceptedTradeUser2(!trade.getacceptedTradeUser2());
                 tradeService.updateTrade(trade);
+                return ResponseEntity.ok("User2 accepted successfully");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
             }
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to accept trade");
+        }
+    }
+
+    @PostMapping("/execute")
+    public ResponseEntity<?> executeTrade(@RequestHeader("Authorization") String token) {
+        try {
+            Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
+            User user1 = trade.getUser1();
+            User user2 = trade.getUser2();
 
             if (trade.getacceptedTradeUser1() && trade.getacceptedTradeUser2()) {
+                /* The trade doesnt use money anymore
                 user1.setMoney(user1.getMoney() - trade.getTradableMoneyUser1() + trade.getTradableMoneyUser2());
                 user2.setMoney(user2.getMoney() - trade.getTradableMoneyUser2() + trade.getTradableMoneyUser1());
                 userService.updateUser(user1);
                 userService.updateUser(user2);
+                */
 
                 List<Item> itemsUser1 = itemService.getItemsByUsernameAndStatus(user1.getName());
                 List<Item> itemsUser2 = itemService.getItemsByUsernameAndStatus(user2.getName());
@@ -231,7 +246,7 @@ public class TradeController {
                     itemService.updateItem(item);
                 }
 
-                tradeService.deleteTrade(trade);
+                //tradeService.deleteTrade(trade); The trade doesn't need to be deleted anymore
 
                 return ResponseEntity.ok("Trade executed successfully");
             } else {
