@@ -203,11 +203,17 @@ public class TradeController {
             if(Objects.equals(user1.getName(), username)) {
                 trade.setacceptedTradeUser1(!trade.getacceptedTradeUser1());
                 tradeService.updateTrade(trade);
-                return ResponseEntity.ok("User1 accepted successfully");
+                if (trade.getacceptedTradeUser1())
+                    return ResponseEntity.ok("User1 accepted successfully");
+                else
+                    return ResponseEntity.ok("User1 unaccepted successfully");
             } else if (Objects.equals(user2.getName(), username)) {
                 trade.setacceptedTradeUser2(!trade.getacceptedTradeUser2());
                 tradeService.updateTrade(trade);
-                return ResponseEntity.ok("User2 accepted successfully");
+                if (trade.getacceptedTradeUser2())
+                    return ResponseEntity.ok("User2 accepted successfully");
+                else
+                    return ResponseEntity.ok("User2 unaccepted successfully");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
             }
@@ -217,7 +223,7 @@ public class TradeController {
     }
 
     @PostMapping("/execute")
-    public ResponseEntity<?> executeTrade(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> executeTrade() {
         try {
             Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
             User user1 = trade.getUser1();
