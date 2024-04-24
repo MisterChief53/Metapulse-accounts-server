@@ -41,7 +41,7 @@ public class ItemService {
 
     public List<Item> getItemsByUsernameAndStatus(String username) {
         if (userRepository.findByName(username) != null) {
-            System.out.println("Getting items of " + username);
+            //System.out.println("Getting items of " + username);
             return itemRepository.findByUsernameAndTradableIsTrue(username);
         } else {
             throw new RuntimeException("This user doesn't exist");
