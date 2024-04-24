@@ -20,6 +20,7 @@ public class SalesController {
     ItemRepository itemRepository;
 
     @GetMapping("/items")
+    @CrossOrigin(origins = {})
     public ResponseEntity<?> getAllItemsForSale() {
         return ResponseEntity.ok(itemForSaleService.getAllItemsForSale());
     }
