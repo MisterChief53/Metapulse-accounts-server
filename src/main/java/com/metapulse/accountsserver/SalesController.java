@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller // This means that this class is a Controller
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://192.168.100.6:3000/")
 @RequestMapping(path="/sales")
 public class SalesController {
     @Autowired
@@ -20,7 +20,6 @@ public class SalesController {
     ItemRepository itemRepository;
 
     @GetMapping("/items")
-    @CrossOrigin(origins = {})
     public ResponseEntity<?> getAllItemsForSale() {
         return ResponseEntity.ok(itemForSaleService.getAllItemsForSale());
     }
