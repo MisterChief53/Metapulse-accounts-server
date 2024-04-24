@@ -228,13 +228,17 @@ public class TradeController {
             User user1 = trade.getUser1();
             User user2 = trade.getUser2();
 
+            System.out.println("Trying to accept the trade");
+
             if(Objects.equals(user1.getName(), username)) {
                 trade.setacceptedTradeUser1(true);
                 tradeService.updateTrade(trade);
+                System.out.println(username + "is accepting the trade");
                 return ResponseEntity.ok("User1 accepted successfully");
             } else if (Objects.equals(user2.getName(), username)) {
                 trade.setacceptedTradeUser2(true);
                 tradeService.updateTrade(trade);
+                System.out.println(username + "is accepting the trade");
                 return ResponseEntity.ok("User2 accepted successfully");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
@@ -251,6 +255,8 @@ public class TradeController {
             User user1 = trade.getUser1();
             User user2 = trade.getUser2();
 
+            System.out.println("Trying to execute the trade");
+
             if (trade.getacceptedTradeUser1() && trade.getacceptedTradeUser2()) {
                 /* The trade doesnt use money anymore
                 user1.setMoney(user1.getMoney() - trade.getTradableMoneyUser1() + trade.getTradableMoneyUser2());
@@ -259,6 +265,7 @@ public class TradeController {
                 userService.updateUser(user2);
                 */
 
+                System.out.println("Executing trade");
                 List<Item> itemsUser1 = itemService.getItemsByUsernameAndStatus(user1.getName());
                 List<Item> itemsUser2 = itemService.getItemsByUsernameAndStatus(user2.getName());
 
@@ -275,6 +282,10 @@ public class TradeController {
                 }
 
                 //tradeService.deleteTrade(trade); The trade doesn't need to be deleted anymore
+                trade.setacceptedTradeUser1(false);
+                trade.setacceptedTradeUser2(false);
+
+                tradeService.updateTrade(trade);
 
                 return ResponseEntity.ok("Trade executed successfully");
             } else {

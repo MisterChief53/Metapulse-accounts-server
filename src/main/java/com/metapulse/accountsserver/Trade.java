@@ -21,9 +21,9 @@ public class Trade {
 
     private Double tradableMoneyUser2;
 
-    private Boolean  acceptedTradeUser1;
+    private Boolean  acceptedTradeUser1 = false;
 
-    private Boolean  acceptedTradeUser2;
+    private Boolean  acceptedTradeUser2 = false;
 
     public Integer getId() {
         return this.id;
