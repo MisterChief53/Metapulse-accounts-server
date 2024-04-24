@@ -29,7 +29,7 @@ public class ImageController {
         Image imagen = imageService.getImage();
 
         if (imagen != null) {
-            return ResponseEntity.ok().body(imagen);
+            return ResponseEntity.ok().body(imagen.getContenido());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is not any image in database");
         }
