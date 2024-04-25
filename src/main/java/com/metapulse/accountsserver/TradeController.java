@@ -20,6 +20,9 @@ public class TradeController {
     private TradeService tradeService;
 
     @Autowired
+    private TradeRepository tradeRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -121,10 +124,14 @@ public class TradeController {
         
     }
 
+    @GetMapping("/allTrades")
+    public @ResponseBody Iterable<Trade> getAllItems() {
+        return tradeRepository.findAll();
+    }
+
     @GetMapping("/tradeData")
     public ResponseEntity<?> tradeData() {
         try {
-
             Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
             User user1 = trade.getUser1();
             User user2 = trade.getUser2();
@@ -140,7 +147,7 @@ public class TradeController {
                 responseBuilder.append("Name: ").append(item.getName()).append("\n");
             }
             responseBuilder.append("\n----------------------\n");
-            responseBuilder.append("User 2 trade status: ").append((trade.getacceptedTradeUser1())).append(("\n"));
+            responseBuilder.append("User 2 trade status: ").append((trade.getacceptedTradeUser2())).append(("\n"));
             responseBuilder.append("Items of User 2 to trade: ").append(trade.getTradableMoneyUser2()).append("\n");
             responseBuilder.append("Items of User 2 to trade:\n");
             for (Item item : itemsUser2) {
@@ -151,7 +158,7 @@ public class TradeController {
 
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find items");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find trades");
         }
     }
 
@@ -232,13 +239,13 @@ public class TradeController {
 
             if(Objects.equals(user1.getName(), username)) {
                 trade.setacceptedTradeUser1(true);
-                tradeService.updateTrade(trade);
-                System.out.println(username + "is accepting the trade");
+                tradeRepository.save(trade);
+                System.out.println(username + " is accepting the trade");
                 return ResponseEntity.ok("User1 accepted successfully");
             } else if (Objects.equals(user2.getName(), username)) {
                 trade.setacceptedTradeUser2(true);
-                tradeService.updateTrade(trade);
-                System.out.println(username + "is accepting the trade");
+                tradeRepository.save(trade);
+                System.out.println(username + " is accepting the trade");
                 return ResponseEntity.ok("User2 accepted successfully");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
@@ -258,13 +265,6 @@ public class TradeController {
             System.out.println("Trying to execute the trade");
 
             if (trade.getacceptedTradeUser1() && trade.getacceptedTradeUser2()) {
-                /* The trade doesnt use money anymore
-                user1.setMoney(user1.getMoney() - trade.getTradableMoneyUser1() + trade.getTradableMoneyUser2());
-                user2.setMoney(user2.getMoney() - trade.getTradableMoneyUser2() + trade.getTradableMoneyUser1());
-                userService.updateUser(user1);
-                userService.updateUser(user2);
-                */
-
                 System.out.println("Executing trade");
                 List<Item> itemsUser1 = itemService.getItemsByUsernameAndStatus(user1.getName());
                 List<Item> itemsUser2 = itemService.getItemsByUsernameAndStatus(user2.getName());
@@ -285,7 +285,7 @@ public class TradeController {
                 trade.setacceptedTradeUser1(false);
                 trade.setacceptedTradeUser2(false);
 
-                tradeService.updateTrade(trade);
+                tradeService.deleteTrade(trade);
 
                 return ResponseEntity.ok("Trade executed successfully");
             } else {
