@@ -1,11 +1,19 @@
 package com.metapulse.accountsserver;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/chat")
@@ -63,6 +71,38 @@ public class ChatController {
             return ResponseEntity.ok(chat);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to create chat");
+        }
+    }
+
+    private final String apiUrl = "http://192.168.100.104:7070/chat/invoke";
+
+    @PostMapping("/sendMessageIA")
+    public ResponseEntity<?> createMessageIA(@RequestParam Integer chatId, @RequestParam String content, @RequestHeader("Authorization") String token ){
+        String username = getUsernameFromToken(token);
+        int id = singleton.getChatIds().get(chatId-1);
+        System.out.println(id);
+        if (username != null) {
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                String requestBody = "{\"input\":{\"message\":\""+content+"\"}}";
+                HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+                ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+                System.out.println("Response status code: " + response.getStatusCode());
+                ObjectMapper mapper = new ObjectMapper();
+
+                Map responseMap = mapper.readValue(response.getBody(), Map.class);
+                String aiMessage = (String) ((Map)responseMap.get("output")).get("content");
+                messageService.createMessage(content,username,id);
+                messageService.createMessage(aiMessage,"mAIni",id);
+                System.out.println(aiMessage);
+                return ResponseEntity.ok("Saved message");
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to add the message");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }
     }
 
