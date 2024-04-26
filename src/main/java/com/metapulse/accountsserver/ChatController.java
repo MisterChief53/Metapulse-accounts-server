@@ -83,11 +83,13 @@ public class ChatController {
         System.out.println(id);
         if (username != null) {
             try {
+                System.out.println("Before sending request to inference");
                 RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 String requestBody = "{\"input\":{\"message\":\""+content+"\"}}";
                 HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+                System.out.println("after sending request to inference");
                 ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
                 System.out.println("Response status code: " + response.getStatusCode());
                 ObjectMapper mapper = new ObjectMapper();
