@@ -9,7 +9,7 @@ public class Message {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
-
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private String username;
