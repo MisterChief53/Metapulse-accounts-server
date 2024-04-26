@@ -41,7 +41,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-/*
+
         // Delete previous data from all repositories
         //WARNING THIS WILL DELETE ALL THE DATABASE
         this.deleteAllRepositories();
@@ -53,7 +53,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         seedItems();
         //Seed chat into chatRepository
         seedChat();
-*/
+
 
 
 
@@ -70,6 +70,9 @@ public class DatabaseSeeder implements CommandLineRunner {
     }
 
     private void seedChat(){
+
+        chatService.createChat();
+        chatService.createChat();
         chatService.createChat();
     }
 
