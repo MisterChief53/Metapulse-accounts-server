@@ -15,7 +15,7 @@ public class ChatService {
         this.singleton =singleton;
     }
 
-
+    /*Because the chat only has an id, it does not require anything else to create one*/
     public Chat createChat(){
         Chat chat = new Chat();
         chatRepository.save(chat);

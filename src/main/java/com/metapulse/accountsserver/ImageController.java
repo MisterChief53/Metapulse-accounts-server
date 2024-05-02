@@ -13,7 +13,7 @@ public class ImageController {
 
     @Autowired
     private ImageService imageService;
-
+    /*This endpoint will save the image that it receives*/
     @PostMapping("/upload")
     public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file) {
         try {
@@ -23,7 +23,7 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There has been an error while saving the image");
         }
     }
-
+    /*Fetchs the last image in the table*/
     @GetMapping("/get")
     public ResponseEntity<?> getImgFile() {
         Image imagen = imageService.getImage();

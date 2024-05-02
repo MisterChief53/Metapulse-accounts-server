@@ -34,7 +34,10 @@ public class ChatController {
         this.singleton =singleton;
     }
 
-
+    /*This endpoint receives the chatid, which represents the chat that receives the message,
+    * the content, and the authorization token of the user to check if it is a authorized user,
+    * first we create a new instance of message, if it is created as intended, it returns an ok response, else
+    * it returns a bad request*/
     @PostMapping("/sendMessage")
     public ResponseEntity<?> createMessage(@RequestParam Integer chatId, @RequestParam String content, @RequestHeader("Authorization") String token ){
         String username = getUsernameFromToken(token);
@@ -52,6 +55,8 @@ public class ChatController {
         }
     }
 
+    /*This endpoin fetches all the messages of a chat, it receives the chatId,
+    * then it searches by the id the messages and return them in the response*/
     @GetMapping("/getMessages")
     public ResponseEntity<?> getAllMessagesFromChat(@RequestParam Integer chatId){
         try {
@@ -64,6 +69,7 @@ public class ChatController {
 
     }
 
+    /*This endpoint creates an instance of chat*/
     @PostMapping("/createChat")
     public ResponseEntity<?> createChat(){
         try{
@@ -75,7 +81,12 @@ public class ChatController {
     }
 
     private final String apiUrl = "http://192.168.100.104:7070/chat/invoke";
-
+    /*This endpoint saves a conversation between a user and the ai, it receives the same
+    * parameters as the normal sendMessage, chatId, content and token, but we make a request to the AI
+    * api, which needs a request body containing the input and a header containing the content type, which
+    * is application_json, the api returns a response entity with the status code and the output, that also has
+    * a content field, which has the message from the AI, to retreive it, it uses a mapper, after getting the message,
+    * it saves all in the corresponding chat*/
     @PostMapping("/sendMessageIA")
     public ResponseEntity<?> createMessageIA(@RequestParam Integer chatId, @RequestParam String content, @RequestHeader("Authorization") String token ){
         String username = getUsernameFromToken(token);

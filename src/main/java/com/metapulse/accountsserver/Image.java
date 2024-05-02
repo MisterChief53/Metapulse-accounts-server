@@ -2,6 +2,7 @@ package com.metapulse.accountsserver;
 
 import jakarta.persistence.*;
 
+/*The image entity, it has an id and the content wich is saved as bytes*/
 @Entity
 @Table(name = "Image")
 public class Image {

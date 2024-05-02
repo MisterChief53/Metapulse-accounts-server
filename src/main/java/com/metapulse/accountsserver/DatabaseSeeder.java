@@ -39,6 +39,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /*This will delete all the tables in database and seed them with specific data*/
     @Override
     public void run(String... args) throws Exception {
 
