@@ -3,6 +3,8 @@ package com.metapulse.accountsserver;
 
 import jakarta.persistence.*;
 
+/*The message entity, has an id, the text content, the username of the user that sends the message
+* and a reference of the chat that contains the message*/
 @Entity
 @Table(name = "Message")
 public class Message {

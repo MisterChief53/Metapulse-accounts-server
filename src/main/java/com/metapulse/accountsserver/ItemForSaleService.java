@@ -19,6 +19,9 @@ public class ItemForSaleService {
     @Autowired
     private UserRepository userRepository;
 
+    /*It creates an instance of item for sale, receives a valid itemId, the price and the descrition
+    * first, it finds the correspondign item, then it creates the itemForSale with the information and save it,
+    * the transactional tag return all the changes made if there is any exception*/
     @Transactional
     public void createItemForSale(int itemId, double price, String description) {
 
@@ -47,6 +50,10 @@ public class ItemForSaleService {
         return itemForSaleRepository.findById(id).orElse(null);
     }
 
+    /*This receives an itemId and a username, first, search if the item is actually for sale,
+    * the user is valid and the given user has enough money to buy the item, then we fetch
+    * for the original owner of the item, update the balance of both users and change the owner of the
+    * item, then it deletes the instance of ItemForSale*/
     @Transactional
     public boolean buyItem(int itemId, String username) {
 

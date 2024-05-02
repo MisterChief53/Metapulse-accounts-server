@@ -11,7 +11,7 @@ public class MessageService {
     private MessageRepository messageRepository;
     @Autowired
     private ChatRepository chatRepository;
-
+    /*Creates a new instance of message, receives the content, the username and the chatId*/
     public void createMessage(String content, String username, int chatId){
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new IllegalArgumentException("Chat with ID " + chatId + " not found"));
         Message message = new Message();

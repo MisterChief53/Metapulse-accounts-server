@@ -47,6 +47,8 @@ public class AuthenticationController {
         }
     }
 
+
+    /*Verify if the token returns a valid username, it receives a token and returns the username*/
     @GetMapping("/secure")
     public ResponseEntity<?> secureEndpoint(@RequestHeader("Authorization") String token) {
         Claims claims = userService.getClaimsFromToken(token);
@@ -60,7 +62,7 @@ public class AuthenticationController {
     }
 
 
-
+    /*Receives a token and returns a response containing the money and name of a user*/
     @GetMapping("/userInfo")
     public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String token) {
         Claims claims = userService.getClaimsFromToken(token);

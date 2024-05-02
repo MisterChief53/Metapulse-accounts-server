@@ -69,6 +69,7 @@ public class UserService {
         }
     }
 
+    /*Returns the information contained in the token*/
     public Claims getClaimsFromToken(String token) {
         SecretKey secretKey = JwtUtils.getSecretKey();
 

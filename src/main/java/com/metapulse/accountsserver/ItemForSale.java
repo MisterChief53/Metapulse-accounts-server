@@ -3,6 +3,7 @@ package com.metapulse.accountsserver;
 
 import jakarta.persistence.*;
 
+/*The itemForSale entity, it has a description, a price and the reference to a item*/
 @Entity
 @Table(name = "itemForSale")
 public class ItemForSale {
