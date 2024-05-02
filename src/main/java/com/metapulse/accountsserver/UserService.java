@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public class UserService {
+    /*The user repository link*/
     @Autowired
     private UserRepository userRepository;
 
@@ -23,6 +24,7 @@ public class UserService {
         this.singleton =singleton;
     }
 
+    /*It receives a name and a password, f*/
     public User registerUser(String name, String password) {
         if (userRepository.findByName(name) != null) {
             throw new RuntimeException("Username already exists");

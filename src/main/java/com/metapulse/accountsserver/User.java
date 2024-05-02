@@ -12,6 +12,10 @@ import java.util.Objects;
 @Table(name = "users") // Specify a different table name, since postgres uses "user" as reserved name.
 public class User {
 
+    /*The user class that represents the user table, it has an integer id, a name which is
+    * unique, a password that is saved as a hash, the amount of money a user owns, and a boolean
+    * that helps us to now if the user has a trade invitation*/
+
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;

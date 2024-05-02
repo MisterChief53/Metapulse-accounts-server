@@ -13,6 +13,9 @@ public class ImageService {
 
     @Autowired
     private ImageRepository imageRepository;
+
+    /*Saves the received image, because we only need one image per time, we delete the last image
+    * before inserting the next one, then, we save the byte stream of the file*/
     @Transactional()
     public void saveImage(MultipartFile file) throws IOException {
 
@@ -26,6 +29,8 @@ public class ImageService {
         image.setContenido(file.getBytes());
         imageRepository.save(image);
     }
+
+    /*It returns the last image to be saved in table*/
     @Transactional(readOnly = true)
     public Image getImage(){
         Optional<Image> image = imageRepository.findFirstByOrderByIdAsc();

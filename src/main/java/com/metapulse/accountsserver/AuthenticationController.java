@@ -12,9 +12,14 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(path="/auth")
 public class AuthenticationController {
+    /*The service that links the controller with the repository*/
     @Autowired
     private UserService userService;
 
+    /*
+    * First, we check if the parameters have something inside them, then,
+    * we use the userService to save the new user, after that, we return an OK response,
+    * if there are any exceptions, it returns a bad request or an unauthorized status*/
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestParam String name, @RequestParam String password) {
         if(!name.isEmpty() && !password.isEmpty()){
@@ -29,7 +34,8 @@ public class AuthenticationController {
         }
 
     }
-
+    /*We use the user sevice to authenticate the user, if it is ok, it returns the token,
+    * if not, we return an unauthorized response*/
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestParam String name, @RequestParam String password) {
         try {
@@ -52,6 +58,8 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }
     }
+
+
 
     @GetMapping("/userInfo")
     public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String token) {
