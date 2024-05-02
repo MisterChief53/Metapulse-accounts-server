@@ -34,6 +34,7 @@ public class AuthenticationController {
     public ResponseEntity<?> authenticateUser(@RequestParam String name, @RequestParam String password) {
         try {
             String token = userService.authenticateUser(name, password);
+            System.out.println(token);
             return ResponseEntity.ok(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");

@@ -141,14 +141,14 @@ public class TradeController {
 
             StringBuilder responseBuilder = new StringBuilder();
             responseBuilder.append("User 1 trade status: ").append((trade.getacceptedTradeUser1())).append(("\n"));
-            responseBuilder.append("Items of User 1 to trade: ").append(trade.getTradableMoneyUser1()).append("\n");
+            responseBuilder.append("Money of User 1 to trade: ").append(trade.getTradableMoneyUser1()).append("\n");
             responseBuilder.append("Items of User 1 to trade:\n");
             for (Item item : itemsUser1) {
                 responseBuilder.append("Name: ").append(item.getName()).append("\n");
             }
             responseBuilder.append("\n----------------------\n");
             responseBuilder.append("User 2 trade status: ").append((trade.getacceptedTradeUser2())).append(("\n"));
-            responseBuilder.append("Items of User 2 to trade: ").append(trade.getTradableMoneyUser2()).append("\n");
+            responseBuilder.append("Money of User 2 to trade: ").append(trade.getTradableMoneyUser2()).append("\n");
             responseBuilder.append("Items of User 2 to trade:\n");
             for (Item item : itemsUser2) {
                 responseBuilder.append("Name: ").append(item.getName()).append("\n");
@@ -162,9 +162,22 @@ public class TradeController {
         }
     }
 
-    @PostMapping("/tradeMoney")
-    public ResponseEntity<?> tradeMoney(@RequestParam Double money, @RequestParam int userId) {
-        User userOwner = userService.getUserFromId(userId);
+    @PutMapping("/tradeMoney")
+    public ResponseEntity<?> tradeMoney(@RequestParam String moneyString, @RequestHeader("Authorization") String token) {
+        double money;
+        try{
+            money = Double.parseDouble(moneyString);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This isn't a double");
+        }
+
+        String username = getUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User userOwner = userService.getUserFromName(username);
+        Integer userId = userOwner.getId();
         Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
         User user;
 
@@ -174,7 +187,7 @@ public class TradeController {
                 if(money <= user.getMoney()) {
                     trade.setTradableMoneyUser1(money);
                     tradeService.updateTrade(trade);
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User 1 trade money updated");
+                    return ResponseEntity.ok("User 1 trade money updated");
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user doesn't have enough money");
                 }
@@ -183,7 +196,7 @@ public class TradeController {
                 if(money <= user.getMoney()) {
                     trade.setTradableMoneyUser2(money);
                     tradeService.updateTrade(trade);
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User 2 trade money updated");
+                    return ResponseEntity.ok("User 2 trade money updated");
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user doesn't have enough money");
                 }
@@ -266,6 +279,10 @@ public class TradeController {
 
             if (trade.getacceptedTradeUser1() && trade.getacceptedTradeUser2()) {
                 System.out.println("Executing trade");
+                user1.setMoney(user1.getMoney() - trade.getTradableMoneyUser1() + trade.getTradableMoneyUser2());
+                user2.setMoney(user2.getMoney() - trade.getTradableMoneyUser2() + trade.getTradableMoneyUser1());
+                userService.updateUser(user1);
+                userService.updateUser(user2);
                 List<Item> itemsUser1 = itemService.getItemsByUsernameAndStatus(user1.getName());
                 List<Item> itemsUser2 = itemService.getItemsByUsernameAndStatus(user2.getName());
 
@@ -284,6 +301,8 @@ public class TradeController {
                 //tradeService.deleteTrade(trade); The trade doesn't need to be deleted anymore
                 trade.setacceptedTradeUser1(false);
                 trade.setacceptedTradeUser2(false);
+                trade.setTradableMoneyUser1(0.0);
+                trade.setTradableMoneyUser2(0.0);
 
                 tradeService.deleteTrade(trade);
 
