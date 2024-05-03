@@ -1,5 +1,7 @@
 package com.metapulse.accountsserver;
 
+
+/*An auxiliar class to give a json format to a given response*/
 public class ResponseDTO {
     private boolean response;
 

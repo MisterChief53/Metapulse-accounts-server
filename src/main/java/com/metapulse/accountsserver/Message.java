@@ -3,6 +3,8 @@ package com.metapulse.accountsserver;
 
 import jakarta.persistence.*;
 
+/*The message entity, has an id, the text content, the username of the user that sends the message
+* and a reference of the chat that contains the message*/
 @Entity
 @Table(name = "Message")
 public class Message {
@@ -10,7 +12,10 @@ public class Message {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
     @Column(columnDefinition = "TEXT")
-    private String content;
+    private String content; // Unencrypted message content
+
+    @Column(columnDefinition = "TEXT")
+    private String encryptedContent; // Encrypted message content
 
     private String username;
 
@@ -52,5 +57,13 @@ public class Message {
 
     public void setChat(Chat chat) {
         this.chat = chat;
+    }
+
+    public String getEncryptedContent() {
+        return encryptedContent;
+    }
+
+    public void setEncryptedContent(String encryptedContent) {
+        this.encryptedContent = encryptedContent;
     }
 }

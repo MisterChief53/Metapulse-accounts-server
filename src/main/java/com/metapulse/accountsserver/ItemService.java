@@ -11,7 +11,8 @@ public class ItemService {
     private ItemRepository itemRepository;
     @Autowired
     private UserRepository userRepository;
-
+    /*Creates an instance of item, receives a name, a description, a code, a ip, the owner and the imagepath,
+    * first, it checks if the item already exists, if not, it continues creating it*/
     public Item createItem(String name, String description, String code, String ip, String user, String imagePath){
 
         if (itemRepository.findByName(name) != null) {
@@ -31,6 +32,7 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
+    /*It returns all the items of a given user*/
     public List<Item> getItemsByUsername(String username) {
         if (userRepository.findByName(username) != null) {
             return itemRepository.findByUsername(username);
@@ -39,6 +41,7 @@ public class ItemService {
         }
     }
 
+    /*Returns all the items of a given user that are tradeable*/
     public List<Item> getItemsByUsernameAndStatus(String username) {
         if (userRepository.findByName(username) != null) {
             //System.out.println("Getting items of " + username);

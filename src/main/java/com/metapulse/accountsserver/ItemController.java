@@ -17,7 +17,8 @@ import java.util.List;
 public class ItemController {
     @Autowired
     private ItemService itemService;
-
+    /*Gets all the items of a given user, it receives a name and returns a list filled with
+    * the items*/
     @PostMapping("/getItemsUser")
     public ResponseEntity<?> getItemsUser(@RequestParam String name) {
         List<Item> items;

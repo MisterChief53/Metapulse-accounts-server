@@ -8,6 +8,10 @@ import jakarta.persistence.Table;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+
+/*The item entity, it has an id, a name, a description, the code that tells us which item it is,
+* the username of the user that owns it, the path of the image that represents it, and a boolean
+* that helps us to know if it is being traded*/
 @Entity
 @Table(name = "items")
 public class Item {
