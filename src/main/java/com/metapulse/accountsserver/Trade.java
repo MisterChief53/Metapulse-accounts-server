@@ -2,6 +2,9 @@ package com.metapulse.accountsserver;
 
 import jakarta.persistence.*;
 
+
+/*The trade entity, it has an id, two users that are related to the trade, the amount of money
+* both users are willing to trade and two boolean variables to check if each user has accepted the trade */
 @Entity
 @Table(name = "trades")
 public class Trade {

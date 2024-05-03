@@ -24,7 +24,8 @@ public class UserService {
         this.singleton =singleton;
     }
 
-    /*It receives a name and a password, f*/
+    /*It receives a name and a password, checks if the given name does not exist in database,
+    * if not, encrypts the password, and creates the user*/
     public User registerUser(String name, String password) {
         if (userRepository.findByName(name) != null) {
             throw new RuntimeException("Username already exists");
@@ -42,6 +43,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+
+    /*Receives a name and a password, first, find the user in database, then, encrypts the plain text
+    * password just received, if the encrypted passwords match,  then a token is build with the username in it
+    * , which is returned*/
     public String authenticateUser(String name, String password) {
         User user = userRepository.findByName(name);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -90,7 +95,7 @@ public class UserService {
             user.setTradeInvitation(!user.getTradeInvitation());
             userRepository.save(user);
         });
-        System.out.println("Se cambio el trade invitation");
+        System.out.println("Trade invitation changed");
     }
 
     public User getUserFromId(int id) {

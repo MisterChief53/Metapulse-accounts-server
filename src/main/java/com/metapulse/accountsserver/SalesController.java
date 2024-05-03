@@ -18,12 +18,14 @@ public class SalesController {
 
     @Autowired
     ItemRepository itemRepository;
-
+    /*Receives nothing, returns all the items that are currently for sale*/
     @GetMapping("/items")
     public ResponseEntity<?> getAllItemsForSale() {
         return ResponseEntity.ok(itemForSaleService.getAllItemsForSale());
     }
 
+    /*Receives via path the item id, returns the item for sale instance if it exists, else,
+    * returns a not found response*/
     @GetMapping("/items/{id}")
     public ResponseEntity<?> getItemForSaleById(@PathVariable("id") int id) {
         ItemForSale itemForSale = itemForSaleService.getItemForSaleById(id);
@@ -33,7 +35,10 @@ public class SalesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
         }
     }
-
+    /*Adds an item for sale, receives a valid item id, the price, a description and the token,
+    * first, it verifies if the token corresponds to a valid user, then , it searches for the item, if the item exists
+    * and the username matches the owner of the item, it adds the item for sale, else, throws an internal
+    * server error status*/
     @PostMapping("/items")
     public ResponseEntity<?> addItemForSale(@RequestParam int item_id, @RequestParam double price, @RequestParam String description,@RequestHeader("Authorization") String token)  {
         String username = getUsernameFromToken(token);
@@ -54,7 +59,9 @@ public class SalesController {
         }
 
     }
-
+    /*Reives via path the id of an item, also via header the token, first
+    * checks if the user is valid, then, it tries to complete the sale, if it is successful
+    * then it returns an ok respónse, else, it returns a not found response*/
     @PostMapping("/buy/{id}")
     public ResponseEntity<?> buyItem(@PathVariable("id") int id, @RequestHeader("Authorization") String token) {
         String username = getUsernameFromToken(token);

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/*A temporal class that helps us to know about the active users and chats of the server session*/
 @Configuration
 public class Singleton {
     private static Singleton instance;

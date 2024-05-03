@@ -36,7 +36,8 @@ public class TradeController {
     public TradeController(Singleton singleton) {
         this.singleton = singleton;
     }
-
+    /*Creates an instance of a trade, retreives the users from the singleton
+    * because  the system only has two users per session in the world*/
     @PostMapping("/create")
     public ResponseEntity<?> createTrade() {
         List<String> usernames = new ArrayList<>(singleton.getUsernames());
@@ -54,7 +55,8 @@ public class TradeController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Some user does not exist");
         }
     }
-
+    /*Sets a given item as tradable, receives the item id and a token to check if the item
+    * acctually belongs to the user*/
     @PostMapping("/tradeItem")
     public ResponseEntity<?> tradeItem(@RequestParam int itemId, @RequestHeader("Authorization") String token) {
         String username = getUsernameFromToken(token);
@@ -161,7 +163,8 @@ public class TradeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find trades");
         }
     }
-
+    /*Updates the amount of money a given user is willing to trade, it requires the moneyString and the token
+    * of the user*/
     @PutMapping("/tradeMoney")
     public ResponseEntity<?> tradeMoney(@RequestParam String moneyString, @RequestHeader("Authorization") String token) {
         double money;
@@ -207,7 +210,9 @@ public class TradeController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user does not exist");
         }
     }
-
+    /*Rejects the trade, it requires the token of the user, first, checks if it is valid,
+    * then, it checks if the user of the token is the user that is participating in the trade,
+    * if it is, sets the acceptedTrade as false*/
     @PutMapping("/rejectTrade")
     public ResponseEntity<?> rejectTrade(@RequestHeader("Authorization") String token) {
         try {
@@ -236,6 +241,7 @@ public class TradeController {
         }
     }
 
+    /*Accepts the trade, same as the method above, but sets the accepted trade as true*/
     @PutMapping("/acceptTrade")
     public ResponseEntity<?> acceptTrade(@RequestHeader("Authorization") String token){
         try {
@@ -267,7 +273,9 @@ public class TradeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to accept trade");
         }
     }
-
+    /*Execute the trade, checks if both users have accepted the trade, if so, it updates the
+    * money of both users, then it fetches the tradeable items of both, and change the owner name to correspond
+    * with the new owner */
     @PostMapping("/execute")
     public ResponseEntity<?> executeTrade() {
         try {
@@ -314,7 +322,7 @@ public class TradeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to execute trade");
         }
     }
-
+    /*Checks if there is a trade request returns a boolean*/
     @GetMapping("/hasRequest")
     public ResponseEntity<ResponseDTO> getUserTradeInvitation(@RequestHeader("Authorization") String token) {
         String username = getUsernameFromToken(token);
@@ -325,7 +333,8 @@ public class TradeController {
         ResponseDTO responseDTO = new ResponseDTO(user.getTradeInvitation());
         return ResponseEntity.ok(responseDTO);
     }
-
+    /*Sends a trade request, need an authorization token, it changes the requestStatus for all the users
+    * in the system, which should be two at max*/
     @PostMapping("/setRequest")
     public ResponseEntity<?> setUsersTradeInvitation(@RequestHeader("Authorization") String token){
         String username = getUsernameFromToken(token);
