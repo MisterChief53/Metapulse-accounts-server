@@ -12,10 +12,7 @@ public class Message {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
     @Column(columnDefinition = "TEXT")
-    private String content; // Unencrypted message content
-
-    @Column(columnDefinition = "TEXT")
-    private String encryptedContent; // Encrypted message content
+    private String content;
 
     private String username;
 
@@ -59,11 +56,4 @@ public class Message {
         this.chat = chat;
     }
 
-    public String getEncryptedContent() {
-        return encryptedContent;
-    }
-
-    public void setEncryptedContent(String encryptedContent) {
-        this.encryptedContent = encryptedContent;
-    }
 }

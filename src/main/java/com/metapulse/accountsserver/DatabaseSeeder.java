@@ -23,11 +23,13 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final ChatService  chatService;
 
+    private final Singleton singleton;
+
     private final JdbcTemplate jdbcTemplate;
 
 
     @Autowired
-    public DatabaseSeeder(ItemForSaleRepository itemForSaleRepository, ItemRepository itemRepository, UserRepository userRepository, TradeRepository tradeRepository, UserService userService, ChatRepository chatRepository, MessageRepository messageRepository, ChatService chatService, JdbcTemplate jdbcTemplate) {
+    public DatabaseSeeder(ItemForSaleRepository itemForSaleRepository, ItemRepository itemRepository, UserRepository userRepository, TradeRepository tradeRepository, UserService userService, ChatRepository chatRepository, MessageRepository messageRepository, ChatService chatService,  Singleton singleton, JdbcTemplate jdbcTemplate) {
         this.itemForSaleRepository = itemForSaleRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
@@ -36,6 +38,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.chatRepository = chatRepository;
         this.messageRepository = messageRepository;
         this.chatService = chatService;
+        this.singleton = singleton;
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -47,7 +50,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         //WARNING THIS WILL DELETE ALL THE DATABASE
         this.deleteAllRepositories();
 
-
+        singleton.setKey(KeyGenerator.generateSecretKey());
         // Seed data into userRepository
         seedUsers();
         // Seed data into itemRepository

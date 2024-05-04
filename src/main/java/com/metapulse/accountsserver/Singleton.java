@@ -17,6 +17,8 @@ public class Singleton {
     private List<Integer> chatIds = new ArrayList<>();
 
 
+
+    private String key;
     private int tradeId;
 
     public Singleton() {
@@ -61,5 +63,13 @@ public class Singleton {
 
     public List<Integer> getChatIds() {
         return chatIds;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }
