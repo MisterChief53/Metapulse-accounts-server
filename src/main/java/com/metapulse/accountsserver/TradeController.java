@@ -1,6 +1,7 @@
 package com.metapulse.accountsserver;
 
 import com.sun.tools.jconsole.JConsoleContext;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -8,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Controller // This means that this class is a Controller
 @CrossOrigin(origins = "http://localhost:3000")
@@ -163,6 +162,33 @@ public class TradeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to find trades");
         }
     }
+
+    /*Returns the amount of money a given user is willing to trade, it requires the token of the user*/
+    @GetMapping("/tradeMoney")
+    public ResponseEntity<?> tradeMoney(@RequestHeader("Authorization") String token) {
+        Claims claims = userService.getClaimsFromToken(token);
+
+        if (claims != null) {
+            String username = (String) claims.get("username");
+
+            Trade trade = tradeService.getTradeFromId(singleton.getTradeId());
+
+            Map<String, Object> response = new HashMap<>();
+
+            if(Objects.equals(trade.getUser1().getName(), username)){
+                response.put("tradeMoney", trade.getTradableMoneyUser1());
+                response.put("tradeMoneyOtherUser", trade.getTradableMoneyUser2());
+            } else {
+                response.put("tradeMoney", trade.getTradableMoneyUser2());
+                response.put("tradeMoneyOtherUser", trade.getTradableMoneyUser1());
+            }
+
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
+    }
+
     /*Updates the amount of money a given user is willing to trade, it requires the moneyString and the token
     * of the user*/
     @PutMapping("/tradeMoney")
@@ -192,7 +218,7 @@ public class TradeController {
                     tradeService.updateTrade(trade);
                     return ResponseEntity.ok("User 1 trade money updated");
                 } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user doesn't have enough money");
+                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("The user doesn't have enough money");
                 }
             } else if (trade.getUser2().getId() == userId) {
                 user = trade.getUser2();
@@ -201,7 +227,7 @@ public class TradeController {
                     tradeService.updateTrade(trade);
                     return ResponseEntity.ok("User 2 trade money updated");
                 } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user doesn't have enough money");
+                    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("The user doesn't have enough money");
                 }
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The user is not part of the trade");
