@@ -69,6 +69,19 @@ public class ChatController {
 
     }
 
+    /*This endpoint retreives the messages from a chat without decripting the message*/
+    @GetMapping("/getEncrypted")
+    public ResponseEntity<?> getAllEncryptedMessagesFromChat(@RequestParam Integer chatId){
+        try {
+            int id =singleton.getChatIds().get(chatId-1);
+            Chat chat = chatService.getChatById(id);
+            return ResponseEntity.ok(messageService.getEncryptedMessagesByChatId(chat.getId()));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to load the messages");
+        }
+
+    }
+
     /*This endpoint creates an instance of chat*/
     @PostMapping("/createChat")
     public ResponseEntity<?> createChat(){

@@ -30,6 +30,8 @@ public class MessageService {
     public void createMessage(String content, String username, int chatId) throws Exception {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new IllegalArgumentException("Chat with ID " + chatId + " not found"));
         Message message = new Message();
+
+        message.setUsername(username );
         message.setChat(chat);
         String encryptedContent = encryptMessage(content); // Call encryption method
         message.setContent(encryptedContent);
@@ -43,6 +45,11 @@ public class MessageService {
             message.setContent(decryptMessage(message.getContent())); // Call decryption method
         }
         return messages;
+    }
+
+    public List<Message> getEncryptedMessagesByChatId(int chatId) throws Exception {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new IllegalArgumentException("Chat with ID " + chatId + " not found"));
+        return messageRepository.getAllMessagesByChat(chat);
     }
 
     public String encryptMessage(String content) throws Exception {
