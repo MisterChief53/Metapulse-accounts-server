@@ -47,7 +47,7 @@ public class UserService {
     /*Receives a name and a password, first, find the user in database, then, encrypts the plain text
     * password just received, if the encrypted passwords match,  then a token is build with the username in it
     * , which is returned*/
-    public String authenticateUser(String name, String password) {
+    public String authenticateUser(String name, String password, int source) {
         User user = userRepository.findByName(name);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -65,13 +65,22 @@ public class UserService {
                         .compact();
             } catch (JwtException e) {
                 e.printStackTrace();
-                throw new RuntimeException("Error al crear el token JWT", e);
+                throw new RuntimeException("There has been a mistake creating the JWT", e);
             }
-            singleton.addUser(name);
+            if(source==1){
+                singleton.addUser(name);
+                System.out.println(singleton.getUsernames());
+            }
+
             return token;
         } else {
             throw new RuntimeException("Invalid token");
         }
+    }
+
+    public void logout(String username){
+        singleton.removeUser(username);
+        System.out.println(singleton.getUsernames());
     }
 
     /*Returns the information contained in the token*/

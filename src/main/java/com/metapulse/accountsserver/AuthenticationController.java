@@ -1,6 +1,7 @@
 package com.metapulse.accountsserver;
 
 import io.jsonwebtoken.Claims;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,14 +38,29 @@ public class AuthenticationController {
     /*We use the user sevice to authenticate the user, if it is ok, it returns the token,
     * if not, we return an unauthorized response*/
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestParam String name, @RequestParam String password) {
+    public ResponseEntity<?> authenticateUser(@RequestParam String name, @RequestParam String password, @RequestParam int source) {
         try {
-            String token = userService.authenticateUser(name, password);
+            String token = userService.authenticateUser(name, password,source);
             System.out.println(token);
             return ResponseEntity.ok(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
+    }
+
+
+    /*Logs out a given username retreaving the name from the token and removing it from the set*/
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String token){
+        ResponseEntity<?> response = secureEndpoint(token);
+        if(response.getStatusCode() == HttpStatus.OK){
+            String username = (String) response.getBody();
+            userService.logout(username);
+            return ResponseEntity.ok("User logged out succesfully");
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+
     }
 
 
@@ -80,4 +96,5 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }
     }
+
 }
