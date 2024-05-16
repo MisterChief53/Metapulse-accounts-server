@@ -61,6 +61,8 @@ public class Singleton {
         chatIds.remove(chatId);
     }
 
+    public void setChatId(Integer chatId, Integer index){ chatIds.set(index,chatId);}
+
     public List<Integer> getChatIds() {
         return chatIds;
     }

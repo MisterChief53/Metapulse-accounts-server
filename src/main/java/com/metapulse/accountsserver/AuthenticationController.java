@@ -51,7 +51,7 @@ public class AuthenticationController {
 
     /*Logs out a given username retreaving the name from the token and removing it from the set*/
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String token){
+    public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String token) throws Exception {
         ResponseEntity<?> response = secureEndpoint(token);
         if(response.getStatusCode() == HttpStatus.OK){
             String username = (String) response.getBody();

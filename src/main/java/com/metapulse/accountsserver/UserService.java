@@ -10,12 +10,19 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Claims;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService {
     /*The user repository link*/
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ChatService chatService;
+
+    @Autowired
+    private MessageService messageService;
 
     private final Singleton singleton;
 
@@ -78,8 +85,25 @@ public class UserService {
         }
     }
 
-    public void logout(String username){
-        singleton.removeUser(username);
+    public void logout(String username) throws Exception {
+        if(singleton.getUsernames().contains(username)){
+            singleton.removeUser(username);
+            chatService.createChat(0);
+
+            if(!messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(1)).isEmpty()){
+                Message message = messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(1)).get(0);
+                if(Objects.equals(message.getUsername(), username)){
+                    chatService.createChat(1);
+                }
+            }
+            if(!messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(2)).isEmpty()){
+                Message message = messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(2)).get(0);
+                if(Objects.equals(message.getUsername(), username)){
+                    chatService.createChat(2);
+                }
+            }
+        }
+
         System.out.println(singleton.getUsernames());
     }
 

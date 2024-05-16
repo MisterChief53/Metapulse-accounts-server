@@ -75,9 +75,9 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private void seedChat(){
 
-        chatService.createChat();
-        chatService.createChat();
-        chatService.createChat();
+        chatService.createChat(-1);
+        chatService.createChat(-1);
+        chatService.createChat(-1);
     }
 
     private void seedUsers(){

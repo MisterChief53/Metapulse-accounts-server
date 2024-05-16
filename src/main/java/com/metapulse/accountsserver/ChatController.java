@@ -86,7 +86,7 @@ public class ChatController {
     @PostMapping("/createChat")
     public ResponseEntity<?> createChat(){
         try{
-            Chat chat = chatService.createChat();
+            Chat chat = chatService.createChat(-1);
             return ResponseEntity.ok(chat);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to create chat");
