@@ -51,11 +51,11 @@ public class AuthenticationController {
 
     /*Logs out a given username retreaving the name from the token and removing it from the set*/
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String token, @RequestParam(defaultValue = "1") int source) throws Exception {
         ResponseEntity<?> response = secureEndpoint(token);
         if(response.getStatusCode() == HttpStatus.OK){
             String username = (String) response.getBody();
-            userService.logout(username);
+            userService.logout(username, source);
             return ResponseEntity.ok("User logged out succesfully");
         }else{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");

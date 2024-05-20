@@ -19,6 +19,9 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private final TradeRepository tradeRepository;
+
+    @Autowired
     private ChatService chatService;
 
     @Autowired
@@ -27,7 +30,8 @@ public class UserService {
     private final Singleton singleton;
 
     @Autowired
-    public UserService(Singleton singleton){
+    public UserService(TradeRepository tradeRepository, Singleton singleton){
+        this.tradeRepository = tradeRepository;
         this.singleton =singleton;
     }
 
@@ -85,25 +89,26 @@ public class UserService {
         }
     }
 
-    public void logout(String username) throws Exception {
+    public void logout(String username,int source) throws Exception {
         if(singleton.getUsernames().contains(username)){
-            singleton.removeUser(username);
-            chatService.createChat(0);
-
-            if(!messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(1)).isEmpty()){
-                Message message = messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(1)).get(0);
-                if(Objects.equals(message.getUsername(), username)){
-                    chatService.createChat(1);
+            if(source==1){
+                singleton.removeUser(username);
+                chatService.createChat(0);
+                tradeRepository.deleteAll();
+                if(!messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(1)).isEmpty()){
+                    Message message = messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(1)).get(0);
+                    if(Objects.equals(message.getUsername(), username)){
+                        chatService.createChat(1);
+                    }
                 }
-            }
-            if(!messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(2)).isEmpty()){
-                Message message = messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(2)).get(0);
-                if(Objects.equals(message.getUsername(), username)){
-                    chatService.createChat(2);
+                if(!messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(2)).isEmpty()){
+                    Message message = messageService.getEncryptedMessagesByChatId(singleton.getChatIds().get(2)).get(0);
+                    if(Objects.equals(message.getUsername(), username)){
+                        chatService.createChat(2);
+                    }
                 }
             }
         }
-
         System.out.println(singleton.getUsernames());
     }
 
