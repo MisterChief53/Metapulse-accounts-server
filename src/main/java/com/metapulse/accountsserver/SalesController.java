@@ -81,7 +81,7 @@ public class SalesController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }
     }
-
+    /*Method used to retreive the username of a given token, it uses the claims stored in it*/
     private String getUsernameFromToken(String token) {
 
         ResponseEntity<?> response = authenticationController.secureEndpoint(token);

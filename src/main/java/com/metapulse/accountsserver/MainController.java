@@ -45,7 +45,7 @@ public class MainController {
         // This returns a JSON or XML with the users
         return userRepository.findAll();
     }
-
+    /*Sets the money of all users to 1500, only used for testing*/
     @PutMapping("/setMoney")
     public @ResponseBody String updateAllUsersMoney() {
         Iterable<User> users = userRepository.findAll();
@@ -55,7 +55,7 @@ public class MainController {
         }
         return "All users have been updated with money 500";
     }
-
+    /*Allows you to generate a new item and to generate a relation with the owner*/
     @PostMapping(path = "/addItem")
     public ResponseEntity<?> addNewItem(@RequestParam String name, @RequestParam String description
             , @RequestParam String code, @RequestParam String ip, @RequestParam String username, @RequestParam String imagePath) {
@@ -73,17 +73,17 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The user owner of the item doesnt exist");
         }
     }
-
+    /*Fetches all the items in the database*/
     @GetMapping(path="/allItems")
     public @ResponseBody Iterable<Item> getAllItems() {
         return itemRepository.findAll();
     }
-
+    /*Fetches all the current trade instances in the database*/
     @GetMapping(path="/allTrades")
     public @ResponseBody Iterable<Trade> getAllTrades() {
         return tradeRepository.findAll();
     }
-
+    /*Deletes all the users in the database, used for testing*/
     @DeleteMapping(path="/deleteAllUsers")
     public @ResponseBody String deleteAllUsers() {
         try {
@@ -94,7 +94,7 @@ public class MainController {
             return "An error occurred while deleting data: " + e.getMessage();
         }
     }
-
+    /*Deletes all the items in the database, used for testing*/
     @DeleteMapping(path="/deleteAllItems")
     public @ResponseBody String deleteAllItems() {
         try {
@@ -106,6 +106,7 @@ public class MainController {
         }
     }
 
+    /*Deletes all the instances of items for sale from the database*/
     @DeleteMapping(path="/deleteAllItemsForSale")
     public @ResponseBody String deleteAllItemsForSale() {
         try {
@@ -116,7 +117,7 @@ public class MainController {
             return "An error occurred while deleting data: " + e.getMessage();
         }
     }
-
+    /*Deletes all the trades that exists in the database*/
     @DeleteMapping(path="/deleteAllTrades")
     public @ResponseBody String deleteAllTrades() {
         try {
@@ -128,6 +129,7 @@ public class MainController {
         }
     }
 
+    /*Deletes almost all the data in the database, OUTDATED*/
     @DeleteMapping(path="/deleteAllData")
     public @ResponseBody String deleteAllData() {
         try {

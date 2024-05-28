@@ -50,15 +50,15 @@ public class ItemService {
             throw new RuntimeException("This user doesn't exist");
         }
     }
-
+    /*Fetches a single item from a given id*/
     public Item getItemFromId(int id) {
         return itemRepository.findItemById(id);
     }
-
+    /*Checks if a given username corresponds with the username of the owner of an item*/
     public Boolean verifyOwner(Item item, String username) {
         return item.getUsername().equals(username);
     }
-
+    /*Updates a given item*/
     public void updateItem(Item item) {
         itemRepository.save(item);
     }

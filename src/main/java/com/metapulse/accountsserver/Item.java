@@ -5,8 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 
 /*The item entity, it has an id, a name, a description, the code that tells us which item it is,

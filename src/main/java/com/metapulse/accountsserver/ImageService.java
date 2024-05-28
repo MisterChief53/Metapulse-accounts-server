@@ -24,7 +24,6 @@ public class ImageService {
             // Delete the last image, only allowing to save one image at a time
             imageRepository.delete(image);
         });
-        System.out.println(file.getContentType());
         Image image = new Image();
         image.setContenido(file.getBytes());
         imageRepository.save(image);

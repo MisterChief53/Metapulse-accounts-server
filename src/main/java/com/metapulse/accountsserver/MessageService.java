@@ -8,7 +8,6 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Base64;
-import java.security.*;
 import java.util.List;
 
 @Service
@@ -37,7 +36,7 @@ public class MessageService {
         message.setContent(encryptedContent);
         messageRepository.save(message);
     }
-
+    /*Fetches all the messages of a given chat, which is retreived using its id, the messages are then decrypted in order to be shown correctly*/
     public List<Message> getMessagesByChatId(int chatId) throws Exception {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new IllegalArgumentException("Chat with ID " + chatId + " not found"));
         List<Message> messages = messageRepository.getAllMessagesByChat(chat);
@@ -47,11 +46,13 @@ public class MessageService {
         return messages;
     }
 
+    /*Fetches all the messages from a given chat, just does not decrypt them, used for testing*/
     public List<Message> getEncryptedMessagesByChatId(int chatId) throws Exception {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new IllegalArgumentException("Chat with ID " + chatId + " not found"));
         return messageRepository.getAllMessagesByChat(chat);
     }
 
+    /*Encrypts a given message, uses the AES algorithm and a cipher to encrypt the content and then returns it*/
     public String encryptMessage(String content) throws Exception {
         Key key = new SecretKeySpec(singleton.getKey().getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
@@ -60,6 +61,7 @@ public class MessageService {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
+    /*Decrypts the message using the secret key and the AES algorithm, same as the encrpytion but contrary */
     public String decryptMessage(String encryptedContent) throws Exception {
         Key key = new SecretKeySpec(singleton.getKey().getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);

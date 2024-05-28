@@ -2,9 +2,12 @@ package com.metapulse.accountsserver;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+
+/*Class that runs automatically at the initialization of the server, it deletes all the content in the database and
+* seeds some information, should not be used in production
+* */
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
     private final ItemForSaleRepository itemForSaleRepository;
@@ -25,11 +28,10 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final Singleton singleton;
 
-    private final JdbcTemplate jdbcTemplate;
 
 
     @Autowired
-    public DatabaseSeeder(ItemForSaleRepository itemForSaleRepository, ItemRepository itemRepository, UserRepository userRepository, TradeRepository tradeRepository, UserService userService, ChatRepository chatRepository, MessageRepository messageRepository, ChatService chatService,  Singleton singleton, JdbcTemplate jdbcTemplate) {
+    public DatabaseSeeder(ItemForSaleRepository itemForSaleRepository, ItemRepository itemRepository, UserRepository userRepository, TradeRepository tradeRepository, UserService userService, ChatRepository chatRepository, MessageRepository messageRepository, ChatService chatService,  Singleton singleton) {
         this.itemForSaleRepository = itemForSaleRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
@@ -39,7 +41,6 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.messageRepository = messageRepository;
         this.chatService = chatService;
         this.singleton = singleton;
-        this.jdbcTemplate = jdbcTemplate;
     }
 
     /*This will delete all the tables in database and seed them with specific data*/
@@ -49,7 +50,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         // Delete previous data from all repositories
         //WARNING THIS WILL DELETE ALL THE DATABASE
         this.deleteAllRepositories();
-
+        //Generates a secret key using a keygenerator and store it in the singleton
         singleton.setKey(KeyGenerator.generateSecretKey());
         // Seed data into userRepository
         seedUsers();
@@ -63,6 +64,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     }
 
+    /*Deletes all the data in the repositories*/
     private void deleteAllRepositories(){
         tradeRepository.deleteAll();
         itemForSaleRepository.deleteAll();
@@ -73,6 +75,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         chatRepository.deleteAll();
     }
 
+    /*Creates three chat, one between users, and two between a user and the AI*/
     private void seedChat(){
 
         chatService.createChat(-1);
@@ -80,13 +83,14 @@ public class DatabaseSeeder implements CommandLineRunner {
         chatService.createChat(-1);
     }
 
+    /*Generates two users*/
     private void seedUsers(){
 
         userService.registerUser("angel","12345");
         userService.registerUser("edson","12345");
 
     }
-
+    /*Creates three items and asigns them to the users, the items are red, green and blue */
     private void seedItems() {
         // Add your seed data here
         Item item1 = new Item();

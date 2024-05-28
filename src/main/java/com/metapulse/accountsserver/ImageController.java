@@ -13,7 +13,7 @@ public class ImageController {
 
     @Autowired
     private ImageService imageService;
-    /*This endpoint will save the image that it receives*/
+    /*This endpoint will save the image that it receives, which is a multipartfile, containig the bytes of the image*/
     @PostMapping("/upload")
     public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file) {
         try {
