@@ -43,7 +43,11 @@ public class SalesController {
     public ResponseEntity<?> addItemForSale(@RequestParam int item_id, @RequestParam double price, @RequestParam String description,@RequestHeader("Authorization") String token)  {
         String username = getUsernameFromToken(token);
         if(username!=null){
-            Item item = itemRepository.findById(item_id).orElseThrow(() -> new IllegalArgumentException("Item with ID " + item_id + " not found"));
+            try {
+                Item item = itemRepository.findById(item_id).orElseThrow(() -> new IllegalArgumentException("Item with ID " + item_id + " not found"));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
+            }
             if(username.equals(item.getUsername())){
                 try {
                     itemForSaleService.createItemForSale(item_id, price, description);
